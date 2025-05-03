@@ -1,0 +1,94 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.13"]             
+
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Tesseract (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tesseract-ocr
+        sudo apt-get install -y libtesseract-dev
+
+    - name: Install Tesseract (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install tesseract -y --no-progress
+        echo "C:\Program Files\Tesseract-OCR" >> $GITHUB_PATH
+
+        # Verify installation
+        if (!(Test-Path "C:\Program Files\Tesseract-OCR\tesseract.exe")) {
+          echo "::error::Tesseract installation failed. Downloading directly..."
+          # Fallback: Direct download if Chocolatey fails
+          $url = "https://github.com/UB-Mannheim/tesseract/releases/download/v5.3.1/tesseract-ocr-w64-setup-5.3.1.20230401.exe"
+          $outpath = "$env:TEMP\tesseract-setup.exe"
+          (New-Object System.Net.WebClient).DownloadFile($url, $outpath)
+          Start-Process -FilePath $outpath -ArgumentList "/S" -Wait
+          echo "C:\Program Files\Tesseract-OCR" >> $GITHUB_PATH
+        }
+        # Note: We hate windows.
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Lint with flake8
+      run: |
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Test with pytest
+      run: |
+        pytest tests/
+
+    - name: Build executable with PyInstaller (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        pyinstaller --onefile --windowed --name OCR_App_${{ matrix.python-version }} src/main.py
+
+    - name: Build executable with PyInstaller (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        pyinstaller --onefile --windowed --name OCR_App_${{ matrix.python-version }} src/main.py
+      # Build config can be passed after the command above.
+      # Add app icons with --icon=app.ico.
+      # Include non-Python files (e.g., images, configs) using --add-data.
+      # We need to name this thing.
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: OCR-App-${{ runner.os }}-Python${{ matrix.python-version }}
+        path: |
+          dist/OCR_App_${{ matrix.python-version }}*
+          dist/*.exe
+        # Contains the built executable, or so I hope.
+        # We really need to name this thing.
