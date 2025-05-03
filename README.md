@@ -6,6 +6,10 @@ Python Optical Character Recognition (PyOCR) is a simple python code that acts a
 
 1. GUI using PyQT
 2. OCR detection using tesseract
+   
+## Tasks
+For reference, the document detailing tasks is [here](./docs/team_tasks.md). It is recommended to attach a commit hash to each completed task for ease of revision. 
+*Note*: This document may be changed during development as needed.
 
 ## Installation
 
