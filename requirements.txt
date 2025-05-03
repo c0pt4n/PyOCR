@@ -1,2 +1,5 @@
+flake8
 opencv-python
+pyinstaller
 pytesseract
+pytest
