@@ -46,7 +46,7 @@ jobs:
           $outpath = "$env:TEMP\tesseract-setup.exe"
           (New-Object System.Net.WebClient).DownloadFile($url, $outpath)
           Start-Process -FilePath $outpath -ArgumentList "/S" -Wait
-          echo "C:\Program Files\Tesseract-OCR" >> $GITHUB_PATH
+          echo "C:\Program Files\Tesseract-OCR" | Out-File -FilePath $env:GITHUB_PATH -Append
         }
         # Note: We hate windows.
 
