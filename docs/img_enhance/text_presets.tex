@@ -1,0 +1,196 @@
+\section{text\_presets.py - Specialized Text Enhancement Presets}\seclabel{text_presets}\modulelabel{text_presets.py}
+
+\subsection{Overview}
+The \texttt{text\_presets.py} module provides specialized enhancement presets designed specifically for improving text readability in different types of documents. These presets are optimized for OCR (Optical Character Recognition) applications where the primary goal is to make text as clear and recognizable as possible.
+
+\subsection{Available Presets}
+
+\subsubsection{mixed\_content\_text\_enhance()}\seclabel{mixed_content_preset}
+\begin{lstlisting}[language=Python, caption=Mixed Content Enhancement Function]
+def mixed_content_text_enhance(image: Union[str, Image.Image]) -> Image.Image:
+    """
+    Enhance images with mixed content while preserving text readability
+    
+    Args:
+        image: PIL Image or path to image file
+        
+    Returns:
+        Enhanced PIL Image with clear, readable text
+    """
+\end{lstlisting}
+
+This preset is designed for images containing both text and other content (photos, graphics, etc.). It uses conservative enhancement parameters to improve text clarity without destroying the non-text elements:
+
+\begin{itemize}
+    \item \textbf{brightness}: 1.05 (slight increase)
+    \item \textbf{contrast}: 1.2 (moderate increase)
+    \item \textbf{sharpness}: 1.3 (moderate sharpening)
+    \item \textbf{color}: 0.9 (slight color reduction)
+    \item \textbf{denoise}: True (remove noise)
+    \item \textbf{binarize}: False (preserve image details)
+\end{itemize}
+
+This is the default preset and is ideal for most mixed-content documents like magazine pages, web screenshots, or textbooks.
+
+\subsubsection{text\_document\_enhance()}\seclabel{text_document_preset}
+\begin{lstlisting}[language=Python, caption=Text Document Enhancement Function]
+def text_document_enhance(image: Union[str, Image.Image]) -> Image.Image:
+    """
+    Enhance specifically for text document clarity - optimized for OCR
+    
+    Args:
+        image: PIL Image or path to image file
+        
+    Returns:
+        Enhanced PIL Image optimized for text clarity
+    """
+\end{lstlisting}
+
+This preset is optimized for documents that are primarily text, such as business letters, reports, or printed articles:
+
+\begin{itemize}
+    \item \textbf{brightness}: 1.05 (slight increase)
+    \item \textbf{contrast}: 1.15 (modest increase)
+    \item \textbf{sharpness}: 1.2 (modest sharpening)
+    \item \textbf{color}: 0.8 (moderate color reduction)
+    \item \textbf{denoise}: True (remove noise)
+    \item \textbf{binarize}: False (preserve grayscale information)
+\end{itemize}
+
+\subsubsection{text\_only\_enhance()}\seclabel{text_only_preset}
+\begin{lstlisting}[language=Python, caption=Pure Text Enhancement Function]
+def text_only_enhance(image: Union[str, Image.Image]) -> Image.Image:
+    """
+    Enhance specifically for pure text content - maximizes contrast for OCR
+    
+    Args:
+        image: PIL Image or path to image file
+        
+    Returns:
+        Enhanced PIL Image optimized for pure text recognition
+    """
+\end{lstlisting}
+
+This preset is designed for plain text documents with minimal formatting, such as typed manuscripts or basic text pages:
+
+\begin{itemize}
+    \item \textbf{brightness}: 1.0 (unchanged)
+    \item \textbf{contrast}: 1.3 (moderate increase)
+    \item \textbf{sharpness}: 1.2 (moderate sharpening)
+    \item \textbf{color}: 0.7 (significant color reduction)
+    \item \textbf{denoise}: True (remove noise)
+    \item \textbf{binarize}: False (preserve grayscale information)
+\end{itemize}
+
+\subsubsection{receipt\_enhance()}\seclabel{receipt_preset}
+\begin{lstlisting}[language=Python, caption=Receipt Enhancement Function]
+def receipt_enhance(image: Union[str, Image.Image]) -> Image.Image:
+    """
+    Enhance specifically for receipts and low-contrast thermal paper
+    
+    Args:
+        image: PIL Image or path to image file
+        
+    Returns:
+        Enhanced PIL Image optimized for receipt processing
+    """
+\end{lstlisting}
+
+This preset is specialized for receipts and thermal paper documents, which often have low contrast and can fade over time:
+
+\begin{itemize}
+    \item \textbf{brightness}: 1.1 (moderate increase)
+    \item \textbf{contrast}: 1.4 (significant increase)
+    \item \textbf{sharpness}: 1.2 (moderate sharpening)
+    \item \textbf{color}: 0.0 (convert to grayscale)
+    \item \textbf{denoise}: True (remove noise)
+    \item \textbf{binarize}: False (preserve grayscale information)
+\end{itemize}
+
+For information on how these parameters affect the image, see \hyperref[sec:parameters]{Enhancement Parameters}.
+
+\subsection{Helper and Utility Functions}
+
+\subsubsection{get\_preset\_name()}\seclabel{get_preset_name}
+\begin{lstlisting}[language=Python, caption=Preset Name Retrieval Function]
+def get_preset_name(preset_id: int) -> str:
+    """Get the name of a preset by its ID"""
+    presets = {
+        0: "Mixed Content with Text Enhancement",
+        1: "Document Text Enhancement",
+        2: "Pure Text Enhancement",
+        3: "Receipt Enhancement",
+    }
+    return presets.get(preset_id, "Unknown Preset")
+\end{lstlisting}
+
+This utility function returns a human-readable name for each preset based on its ID.
+
+\subsubsection{enhance\_with\_preset()}\seclabel{enhance_with_preset}
+\begin{lstlisting}[language=Python, caption=Preset Selection Function]
+def enhance_with_preset(image: Union[str, Image.Image], preset_id: int) -> Image.Image:
+    """
+    Enhance an image using a predefined preset
+    
+    Args:
+        image: PIL Image or path to image file
+        preset_id: Preset identifier (0-3)
+        
+    Returns:
+        Enhanced PIL Image
+    """
+\end{lstlisting}
+
+This is the main entry point for using the presets. It:
+\begin{enumerate}
+    \item Takes an image and a preset ID
+    \item Maps the ID to the appropriate enhancement function
+    \item Applies the selected preset to the image
+    \item Returns the enhanced image
+\end{enumerate}
+
+If an invalid preset ID is provided, it defaults to the mixed content preset.
+
+\subsection{Usage Examples}
+
+\subsubsection{Basic Usage}
+\begin{lstlisting}[language=Python, caption=Basic Preset Usage]
+from PIL import Image
+from src.img_enhance.text_presets import enhance_with_preset
+
+# Load an image
+image = Image.open("document.jpg")
+
+# Apply the mixed content preset (preset 0)
+enhanced = enhance_with_preset(image, 0)
+enhanced.save("enhanced_document.jpg")
+
+# Apply the receipt preset (preset 3)
+receipt_enhanced = enhance_with_preset(image, 3)
+receipt_enhanced.save("receipt_enhanced.jpg")
+\end{lstlisting}
+
+\subsubsection{Using Direct Preset Functions}
+\begin{lstlisting}[language=Python, caption=Direct Function Usage]
+from PIL import Image
+from src.img_enhance.text_presets import text_document_enhance, receipt_enhance
+
+# Load an image
+image = Image.open("document.jpg")
+
+# Apply document enhancement directly
+doc_enhanced = text_document_enhance(image)
+doc_enhanced.save("document_enhanced.jpg")
+
+# Apply receipt enhancement directly
+receipt = Image.open("receipt.jpg")
+receipt_enhanced = receipt_enhance(receipt)
+receipt_enhanced.save("receipt_enhanced.jpg")
+\end{lstlisting}
+
+\subsection{Related Modules}
+\begin{itemize}
+    \item This module uses the \hyperref[sec:enhancer]{\texttt{EnhancementParams}} class from \moduleref{enhancer.py}
+    \item The \hyperref[sec:presets_cli]{\texttt{presets\_cli.py}} module provides a command-line interface for these presets
+    \item For automatic parameter determination instead of presets, see \hyperref[sec:auto_enhance]{\texttt{auto\_enhance.py}}
+\end{itemize} 
