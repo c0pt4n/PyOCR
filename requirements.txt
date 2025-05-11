@@ -1,4 +1,7 @@
+Pillow
 flake8
+matplotlib
+numpy
 opencv-python
 pyinstaller
 pytesseract
