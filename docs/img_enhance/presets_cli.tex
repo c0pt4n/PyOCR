@@ -1,0 +1,172 @@
+\section{presets\_cli.py - Command Line Interface for Text Presets}\seclabel{presets_cli}\modulelabel{presets_cli.py}
+
+\subsection{Overview}
+The \texttt{presets\_cli.py} module provides a command-line interface for applying the specialized text enhancement presets to images. It allows users to quickly enhance images for OCR without programming knowledge, compare results, and save the enhanced images.
+
+\subsection{Command Line Arguments}\seclabel{presets_cli_args}
+
+\begin{lstlisting}[language=Python, caption=Command Line Argument Parser]
+def parse_args():
+    """Parse command-line arguments"""
+    parser = argparse.ArgumentParser(description='Image Enhancement Presets for OCR Text')
+    
+    parser.add_argument('input_path', help='Input image path')
+    parser.add_argument('--output-path', '-o', help='Output image path')
+    parser.add_argument('--preset', '-p', type=int, default=0, 
+                        help='Enhancement preset: 0=Mixed Content, 1=Document, 2=Text Only, 3=Receipt')
+    parser.add_argument('--compare', '-c', action='store_true', 
+                        help='Create comparison image')
+    
+    return parser.parse_args()
+\end{lstlisting}
+
+The command-line interface accepts the following arguments:
+
+\begin{itemize}
+    \item \textbf{input\_path} (required): Path to the input image file
+    \item \textbf{-{}-output-path, -o} (optional): Path where the enhanced image should be saved
+    \item \textbf{-{}-preset, -p} (optional): Preset ID to apply (default: 0)
+        \begin{itemize}
+            \item 0 = \hyperref[sec:mixed_content_preset]{Mixed Content with Text Enhancement}
+            \item 1 = \hyperref[sec:text_document_preset]{Document Text Enhancement}
+            \item 2 = \hyperref[sec:text_only_preset]{Pure Text Enhancement}
+            \item 3 = \hyperref[sec:receipt_preset]{Receipt Enhancement}
+        \end{itemize}
+    \item \textbf{-{}-compare, -c} (optional): Create a side-by-side comparison of original and enhanced images
+\end{itemize}
+
+\subsection{Main Process Flow}\seclabel{presets_cli_flow}
+
+\begin{lstlisting}[language=Python, caption=Main Process Function]
+def main():
+    """Main entry point"""
+    args = parse_args()
+    
+    # Check if input file exists
+    if not os.path.exists(args.input_path):
+        print(f"Error: Input file '{args.input_path}' not found.")
+        return 1
+    
+    # Get preset name
+    preset_name = get_preset_name(args.preset)
+    print(f"Applying preset: {preset_name}")
+    
+    # Load original image
+    original = Image.open(args.input_path).convert('RGB')
+    
+    # Apply enhancement
+    enhanced = enhance_with_preset(original, args.preset)
+    
+    # Determine output path
+    if args.output_path:
+        output_path = args.output_path
+    else:
+        # Use input filename with preset suffix
+        dirname = os.path.dirname(args.input_path)
+        filename = os.path.basename(args.input_path)
+        base, ext = os.path.splitext(filename)
+        output_path = os.path.join(dirname, f"{base}_preset{args.preset}{ext}")
+    
+    # Create output directory if needed
+    os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
+    
+    # Save enhanced image
+    enhanced.save(output_path)
+    print(f"Saved enhanced image to: {output_path}")
+    
+    # Create comparison if requested
+    if args.compare:
+        comparison_path = os.path.splitext(output_path)[0] + "_comparison.png"
+        comparison = create_comparison_image(
+            original, 
+            enhanced,
+            title=f"Preset: {preset_name}"
+        )
+        comparison.save(comparison_path)
+        print(f"Saved comparison image to: {comparison_path}")
+    
+    return 0
+\end{lstlisting}
+
+The main process:
+
+\begin{enumerate}
+    \item Parses command-line arguments using \hyperref[sec:presets_cli_args]{\texttt{parse\_args()}}
+    \item Verifies the input file exists
+    \item Gets the preset name using \hyperref[sec:get_preset_name]{\texttt{get\_preset\_name()}}
+    \item Loads the original image
+    \item Applies the selected preset using \hyperref[sec:enhance_with_preset]{\texttt{enhance\_with\_preset()}}
+    \item Determines the output path (user-specified or auto-generated)
+    \item Creates the output directory if needed
+    \item Saves the enhanced image
+    \item Optionally creates and saves a comparison image
+\end{enumerate}
+
+\subsection{Output Naming Convention}\seclabel{naming_convention}
+If no output path is specified, the tool automatically generates an output filename using the following pattern:
+\begin{verbatim}
+[original_filename]_preset[preset_id].[original_extension]
+\end{verbatim}
+
+For example, if the input file is \texttt{document.jpg} and preset 2 is applied, the output will be \texttt{document\_preset2.jpg}.
+
+If comparison is requested, the comparison image will be saved as:
+\begin{verbatim}
+[output_filename_without_extension]_comparison.png
+\end{verbatim}
+
+For example: \texttt{document\_preset2\_comparison.png}
+
+\subsection{Usage Examples}\seclabel{presets_cli_examples}
+
+\subsubsection{Basic Usage}
+\begin{lstlisting}[language=Bash, caption=Basic CLI Usage]
+# Apply the default mixed content preset
+python src/img_enhance/presets_cli.py document.jpg
+
+# Apply the receipt preset
+python src/img_enhance/presets_cli.py receipt.jpg --preset 3
+
+# Specify output file
+python src/img_enhance/presets_cli.py document.jpg -o enhanced_document.jpg
+
+# Create comparison image
+python src/img_enhance/presets_cli.py document.jpg --compare
+\end{lstlisting}
+
+\subsubsection{Batch Processing}
+While not directly supported by the presets\_cli.py script, batch processing can be achieved using shell scripts:
+
+\begin{lstlisting}[language=Bash, caption=Batch Processing Example]
+# Process all JPG files in a directory with the Document preset
+for file in *.jpg; do
+    python src/img_enhance/presets_cli.py "$file" --preset 1 --compare
+done
+\end{lstlisting}
+
+\subsection{Integration with Other Tools}\seclabel{integration}
+The presets\_cli.py script can be easily integrated with other command-line tools and workflows:
+
+\begin{lstlisting}[language=Bash, caption=Integration Example]
+# Enhance an image and pass to OCR
+python src/img_enhance/presets_cli.py document.jpg -o enhanced.jpg
+tesseract enhanced.jpg output -l eng
+
+# Process a scanned image
+scan-image | python src/img_enhance/presets_cli.py - -o enhanced.jpg
+\end{lstlisting}
+
+\subsection{Implementation Notes}
+\begin{itemize}
+    \item The script uses the \hyperref[sec:text_presets]{\texttt{text\_presets.py}} module for the actual enhancement operations
+    \item It leverages the comparison functionality from utils.py to generate side-by-side comparisons
+    \item Error handling ensures the script exits gracefully if the input file doesn't exist
+    \item Output directories are created automatically if they don't exist
+\end{itemize}
+
+\subsection{Related Modules}
+\begin{itemize}
+    \item \hyperref[sec:text_presets]{\texttt{text\_presets.py}} - Provides the preset enhancement functions
+    \item \hyperref[sec:enhancer]{\texttt{enhancer.py}} - Core enhancement functionality
+    \item \hyperref[sec:auto_enhance]{\texttt{auto\_enhance.py}} - Alternative approach with automatic parameter determination
+\end{itemize} 

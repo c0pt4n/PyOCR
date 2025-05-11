@@ -1,0 +1,164 @@
+\section{auto\_enhance.py - Automated Image Enhancement}\seclabel{auto_enhance}\modulelabel{auto_enhance.py}
+
+\subsection{Overview}
+The \texttt{auto\_enhance.py} module provides functionality for automatically enhancing images for OCR without requiring manual parameter tuning. It uses image analysis techniques to determine optimal enhancement parameters based on image characteristics.
+
+\subsection{Key Functions}
+
+\subsubsection{analyze\_image()}\seclabel{analyze_image}
+\begin{lstlisting}[language=Python, caption=Image Analysis Function]
+def analyze_image(image: Union[str, Image.Image]) -> Dict[str, float]:
+    """
+    Analyze image and extract key metrics
+    
+    Args:
+        image: PIL Image or path to image file
+        
+    Returns:
+        Dictionary with image metrics
+    """
+\end{lstlisting}
+
+This function analyzes an image and extracts metrics that are used to determine optimal enhancement parameters. It calculates:
+
+\begin{itemize}
+    \item \textbf{brightness}: Average brightness of the image (0-1)
+    \item \textbf{contrast}: Standard deviation of pixel values, indicating contrast level (0-1)
+    \item \textbf{sharpness}: Edge detection-based metric for image sharpness (0-1)
+    \item \textbf{color\_saturation}: Color variation in the image (0-1)
+    \item \textbf{noise\_level}: Estimated noise in the image (0-1)
+    \item \textbf{might\_be\_skewed}: Boolean indicating if text appears skewed
+    \item \textbf{r\_avg, g\_avg, b\_avg}: Average values of RGB channels (0-1)
+\end{itemize}
+
+\subsubsection{determine\_optimal\_params()}\seclabel{determine_optimal_params}
+\begin{lstlisting}[language=Python, caption=Parameter Determination Function]
+def determine_optimal_params(metrics: Dict[str, float]) -> EnhancementParams:
+    """
+    Determine optimal enhancement parameters based on image metrics
+    
+    Args:
+        metrics: Dictionary with image metrics from analyze_image
+        
+    Returns:
+        EnhancementParams with suggested values
+    """
+\end{lstlisting}
+
+This function uses the metrics from \hyperref[sec:analyze_image]{\texttt{analyze\_image()}} to determine optimal enhancement parameters. It implements a rule-based system that adjusts parameters based on image characteristics:
+
+\begin{itemize}
+    \item Adjusts brightness if the image is too dark or too bright
+    \item Increases contrast for low-contrast images
+    \item Enhances sharpness for blurry images
+    \item Increases color saturation for faded documents
+    \item Enables denoising for noisy images
+    \item Enables deskewing for skewed text
+    \item Determines if binarization would be beneficial based on content
+\end{itemize}
+
+The function returns an \hyperref[sec:enhancement_params]{\texttt{EnhancementParams}} object with the optimized settings.
+
+\subsubsection{auto\_enhance\_image()}\seclabel{auto_enhance_function}
+\begin{lstlisting}[language=Python, caption=Auto Enhancement Function]
+def auto_enhance_image(image: Union[str, Image.Image], 
+                      preview: bool = False, 
+                      preview_size: Tuple[int, int] = (400, 400)) -> Image.Image:
+    """
+    Automatically enhance an image for OCR by analyzing it and applying optimal enhancements
+    
+    Args:
+        image: PIL Image or path to image file
+        preview: If True, returns a smaller preview image
+        preview_size: Size of preview if preview=True
+        
+    Returns:
+        Enhanced PIL Image
+    """
+\end{lstlisting}
+
+This is the main entry point for automatic enhancement. It:
+\begin{enumerate}
+    \item Analyzes the image using \hyperref[sec:analyze_image]{\texttt{analyze\_image()}}
+    \item Determines optimal parameters using \hyperref[sec:determine_optimal_params]{\texttt{determine\_optimal\_params()}}
+    \item Creates an \hyperref[sec:enhancer_class]{\texttt{ImageEnhancer}} with those parameters
+    \item Applies the enhancements and returns the enhanced image
+\end{enumerate}
+
+\subsubsection{batch\_auto\_enhance()}\seclabel{batch_enhance}
+\begin{lstlisting}[language=Python, caption=Batch Enhancement Function]
+def batch_auto_enhance(image_paths: List[str], output_dir: str) -> List[str]:
+    """
+    Automatically enhance multiple images and save them
+    
+    Args:
+        image_paths: List of paths to images
+        output_dir: Directory to save enhanced images
+        
+    Returns:
+        List of paths to enhanced images
+    """
+\end{lstlisting}
+
+This function processes multiple images in batch mode, saving the enhanced versions to the specified output directory. It internally uses \hyperref[sec:auto_enhance_function]{\texttt{auto\_enhance\_image()}} for each image.
+
+\subsubsection{get\_enhancement\_preview\_grid()}\seclabel{preview_grid}
+\begin{lstlisting}[language=Python, caption=Preview Grid Function]
+def get_enhancement_preview_grid(image: Union[str, Image.Image], 
+                                variations: Optional[List[Dict[str, float]]] = None) -> Image.Image:
+    """
+    Generate a grid of enhancement previews with different parameters
+    
+    Args:
+        image: PIL Image or path to image file
+        variations: List of dictionaries with parameter variations
+        
+    Returns:
+        Grid image with different enhancement options
+    """
+\end{lstlisting}
+
+This function creates a visual grid of enhancement options, allowing users to compare different parameter settings. The grid includes:
+\begin{itemize}
+    \item The original image
+    \item Multiple variations with different enhancement parameters
+\end{itemize}
+
+By default, it includes the following variations:
+\begin{itemize}
+    \item Original
+    \item Brighter with higher contrast
+    \item Higher contrast and sharper
+    \item Darker with higher contrast
+    \item Binarized (black and white)
+    \item Denoised and sharper
+\end{itemize}
+
+\subsection{Implementation Notes}
+\begin{itemize}
+    \item The automatic enhancement uses a heuristic approach based on empirical rules
+    \item Image analysis focuses on characteristics that impact OCR quality (brightness, contrast, etc.)
+    \item The algorithm is conservative to avoid over-processing images in ways that might harm OCR
+    \item The preview grid function allows users to visually compare options and select the best approach
+\end{itemize}
+
+\subsection{Usage Example}
+\begin{lstlisting}[language=Python, caption=Example of Auto Enhancement]
+from PIL import Image
+from src.img_enhance.auto_enhance import auto_enhance_image, get_enhancement_preview_grid
+
+# Automatically enhance an image
+input_path = "document.jpg"
+enhanced = auto_enhance_image(input_path)
+enhanced.save("enhanced_document.jpg")
+
+# Generate a preview grid of different enhancement options
+grid = get_enhancement_preview_grid(input_path)
+grid.save("enhancement_options.jpg")
+\end{lstlisting}
+
+\subsection{Related Modules}
+\begin{itemize}
+    \item This module depends on the \hyperref[sec:enhancer]{\texttt{enhancer.py}} module for the enhancement functionality
+    \item The \hyperref[sec:text_presets]{\texttt{text\_presets.py}} module provides an alternative approach with pre-defined presets
+\end{itemize} 

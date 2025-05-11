@@ -1,0 +1,78 @@
+\section{Image Enhancement Module for OCR}\seclabel{overview}
+
+\subsection{Overview}
+The \texttt{img\_enhance} module provides tools for enhancing images to improve OCR (Optical Character Recognition) results. It includes both automatic and manual enhancement options, with a focus on improving text readability while preserving image quality.
+
+\subsection{Module Structure}
+The module consists of several components:
+\begin{itemize}
+    \item \textbf{\hyperref[sec:enhancer]{enhancer.py}}: Core enhancement functionality and parameter classes
+    \item \textbf{\hyperref[sec:auto_enhance]{auto\_enhance.py}}: Automated image enhancement algorithms
+    \item \textbf{\hyperref[sec:text_presets]{text\_presets.py}}: Pre-defined enhancement presets optimized for text readability
+    \item \textbf{utils.py}: Utility functions for image processing and visualization
+    \item \textbf{cli.py}: Command-line interface for batch processing
+    \item \textbf{\hyperref[sec:presets_cli]{presets\_cli.py}}: Command-line interface for applying text-focused presets
+\end{itemize}
+
+\subsection{Features}
+\begin{itemize}
+    \item \textbf{Automatic image enhancement} with intelligent parameter selection (see \hyperref[sec:auto_enhance]{Auto Enhancement})
+    \item \textbf{Manual enhancement} with fine control over parameters (see \hyperref[sec:enhancer]{Core Enhancement})
+    \item \textbf{Text-optimized presets} for different document types (see \hyperref[sec:text_presets]{Text Presets})
+    \item \textbf{Batch processing} for multiple images
+    \item \textbf{Command-line interfaces} for easy integration (see \hyperref[sec:presets_cli]{Presets CLI})
+    \item \textbf{Comparison tools} to visualize enhancements
+    \item \textbf{Parameter saving/loading} for consistent results
+\end{itemize}
+
+\subsection{Enhancement Parameters}\seclabel{parameters}
+The following parameters can be adjusted for image enhancement:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|p{7cm}|}
+\hline
+\textbf{Parameter} & \textbf{Range} & \textbf{Description} \\
+\hline
+brightness & 0.5-1.5 & Controls overall image brightness \\
+\hline
+contrast & 0.5-2.0 & Enhances difference between light and dark areas \\
+\hline
+sharpness & 0.0-2.0 & Increases edge definition to make text clearer \\
+\hline
+color & 0.0-2.0 & Adjusts color saturation (0.0 = grayscale) \\
+\hline
+denoise & boolean & Applies noise reduction to smooth the image \\
+\hline
+binarize & boolean & Converts to black and white (threshold-based) \\
+\hline
+binarize\_threshold & 0-255 & Threshold for binary conversion \\
+\hline
+deskew & boolean & Attempts to straighten text (if skewed) \\
+\hline
+resize\_factor & float & Scale factor for resizing (e.g., 1.5 = 150\%) \\
+\hline
+\end{tabular}
+\caption{Image Enhancement Parameters}
+\end{table}
+
+For more details on these parameters, see the \hyperref[sec:enhancer]{\texttt{EnhancementParams} class documentation}.
+
+\subsection{Usage Patterns}\seclabel{usage}
+The module supports different usage patterns:
+
+\begin{enumerate}
+    \item \textbf{Automatic enhancement}: The system analyzes the image and applies appropriate enhancements (see \hyperref[sec:auto_enhance_function]{auto\_enhance\_image()})
+    \item \textbf{Preset-based enhancement}: Pre-defined settings optimized for specific document types (see \hyperref[sec:text_presets]{Text Presets})
+    \item \textbf{Manual enhancement}: Full control over all enhancement parameters (see \hyperref[sec:enhancer_class]{ImageEnhancer class})
+    \item \textbf{Batch processing}: Apply the same enhancement to multiple images (see \hyperref[sec:batch_enhance]{batch\_auto\_enhance()})
+\end{enumerate}
+
+\subsection{Integration}
+The module is designed for easy integration with:
+\begin{itemize}
+    \item Command-line workflows
+    \item Python applications
+    \item GUI interfaces
+    \item OCR pipelines
+\end{itemize} 

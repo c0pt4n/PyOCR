@@ -1,0 +1,124 @@
+\section{enhancer.py - Core Enhancement Functionality}\seclabel{enhancer}\modulelabel{enhancer.py}
+
+\subsection{Overview}
+The \texttt{enhancer.py} module contains the core functionality for image enhancement in the PyOCR system. It provides parameter definition and enhancement operations through two main classes: \texttt{EnhancementParams} and \texttt{ImageEnhancer}.
+
+\subsection{EnhancementParams Class}\seclabel{enhancement_params}
+\begin{lstlisting}[language=Python, caption=EnhancementParams Class Definition]
+@dataclass
+class EnhancementParams:
+    """Parameters for image enhancement"""
+    brightness: float = 1.0  # 0.5 to 1.5
+    contrast: float = 1.0    # 0.5 to 2.0
+    sharpness: float = 1.0   # 0.0 to 2.0
+    color: float = 1.0       # 0.0 to 2.0
+    denoise: bool = False
+    binarize: bool = False
+    binarize_threshold: int = 128  # 0 to 255
+    deskew: bool = False
+    resize_factor: Optional[float] = None
+\end{lstlisting}
+
+The \texttt{EnhancementParams} class is a dataclass that encapsulates all parameters used for image enhancement:
+
+\begin{itemize}
+    \item \textbf{brightness} (float, default=1.0): Controls the overall brightness of the image. Values > 1.0 increase brightness, values < 1.0 decrease brightness. Range: 0.5-1.5.
+    \item \textbf{contrast} (float, default=1.0): Controls the contrast between light and dark areas. Values > 1.0 increase contrast, values < 1.0 decrease contrast. Range: 0.5-2.0.
+    \item \textbf{sharpness} (float, default=1.0): Controls edge definition. Higher values make text edges sharper. Range: 0.0-2.0.
+    \item \textbf{color} (float, default=1.0): Controls color saturation. 0.0 removes all color (grayscale), values > 1.0 increase saturation. Range: 0.0-2.0.
+    \item \textbf{denoise} (bool, default=False): When True, applies a noise reduction filter.
+    \item \textbf{binarize} (bool, default=False): When True, converts the image to binary (black and white).
+    \item \textbf{binarize\_threshold} (int, default=128): Threshold value for binarization. Range: 0-255.
+    \item \textbf{deskew} (bool, default=False): When True, attempts to straighten text in the image.
+    \item \textbf{resize\_factor} (Optional[float], default=None): When set, resizes the image by this factor (e.g., 1.5 = 150\%).
+\end{itemize}
+
+See \hyperref[sec:parameters]{Enhancement Parameters} for more details on the effects of these parameters.
+
+The class also provides methods for converting parameters to and from dictionary format:
+\begin{itemize}
+    \item \texttt{to\_dict()}: Converts parameters to a dictionary
+    \item \texttt{from\_dict(cls, params\_dict)}: Class method to create parameters from a dictionary
+\end{itemize}
+
+\subsection{ImageEnhancer Class}\seclabel{enhancer_class}
+The \texttt{ImageEnhancer} class handles the actual image enhancement process:
+
+\begin{lstlisting}[language=Python, caption=ImageEnhancer Class Definition]
+class ImageEnhancer:
+    """Class for enhancing images for OCR processing"""
+    
+    def __init__(self, params: Optional[EnhancementParams] = None):
+        """Initialize with enhancement parameters"""
+        self.params = params or EnhancementParams()
+\end{lstlisting}
+
+\subsubsection{Key Methods}
+\begin{itemize}
+    \item \texttt{set\_params(params)}: Updates all enhancement parameters at once
+    \item \texttt{update\_params(**kwargs)}: Updates specific parameters by keyword arguments
+    \item \texttt{enhance(image)}: Enhances an image using the current parameters
+    \item \texttt{\_apply\_enhancements(img)}: Internal method that applies all enhancements in sequence
+    \item \texttt{\_binarize\_image(img, threshold)}: Converts image to binary (black and white)
+    \item \texttt{\_deskew\_image(img)}: Attempts to straighten text in the image
+\end{itemize}
+
+\subsection{Enhancement Process}\seclabel{enhancement_process}
+When enhancing an image, the following steps are performed in sequence:
+
+\begin{enumerate}
+    \item Resize the image (if resize\_factor is specified)
+    \item Apply brightness adjustment
+    \item Apply contrast adjustment
+    \item Apply color saturation adjustment
+    \item Apply sharpness adjustment
+    \item Apply denoising (if enabled)
+    \item Apply deskewing (if enabled)
+    \item Apply binarization (if enabled)
+\end{enumerate}
+
+The order of operations is important as each step can affect the results of subsequent steps.
+
+\subsection{Implementation Details}
+The enhancement functionality is built on top of the Python Imaging Library (PIL/Pillow), leveraging its built-in enhancement capabilities:
+
+\begin{itemize}
+    \item \texttt{ImageEnhance.Brightness} for brightness adjustment
+    \item \texttt{ImageEnhance.Contrast} for contrast adjustment
+    \item \texttt{ImageEnhance.Color} for color saturation adjustment
+    \item \texttt{ImageEnhance.Sharpness} for sharpness adjustment
+    \item \texttt{ImageFilter.MedianFilter} for noise reduction
+\end{itemize}
+
+\subsection{Usage Example}
+\begin{lstlisting}[language=Python, caption=Example usage of ImageEnhancer]
+from PIL import Image
+from src.img_enhance.enhancer import ImageEnhancer, EnhancementParams
+
+# Create custom parameters
+params = EnhancementParams(
+    brightness=1.2,
+    contrast=1.5,
+    sharpness=1.3,
+    denoise=True
+)
+
+# Create enhancer with parameters
+enhancer = ImageEnhancer(params)
+
+# Load and enhance an image
+image = Image.open("input.jpg")
+enhanced = enhancer.enhance(image)
+enhanced.save("output.jpg")
+
+# Update parameters and re-enhance
+enhancer.update_params(binarize=True, binarize_threshold=150)
+binary_enhanced = enhancer.enhance(image)
+binary_enhanced.save("binary_output.jpg")
+\end{lstlisting}
+
+\subsection{Related Modules}
+\begin{itemize}
+    \item The \hyperref[sec:auto_enhance]{auto\_enhance.py} module uses the \texttt{ImageEnhancer} class for automatic enhancement.
+    \item The \hyperref[sec:text_presets]{text\_presets.py} module defines presets using the \texttt{EnhancementParams} class.
+\end{itemize} 
