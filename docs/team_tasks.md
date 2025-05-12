@@ -4,9 +4,9 @@
 
 ## GUI for tesseract
 - Use py-tesseract
-  - [ ] Setup project environment & dependencies installation
-  - [ ] Configure tesseract engine paths for cross-platform compatibility
-  - [ ] Create basic PyQt window structure with responsive design
+  - [X] Setup project environment & dependencies installation
+  - [X] Configure tesseract engine paths for cross-platform compatibility
+  - [X] Create basic PyQt window structure with responsive design
   - [ ] Implement threading to prevent UI freezing during processing
   - [ ] Add progress indicators for OCR operations
 
@@ -46,21 +46,22 @@
 ## Processing
 - Handle Image Quality using AI models (Can use transfer learning)
   - Implement basic OpenCV preprocessing pipeline
-    - [ ] Grayscale conversion
-    - [ ] Noise reduction
-    - [ ] Contrast enhancement
-    - [ ] Thresholding
+    - [X] Grayscale conversion
+    - [X] Noise reduction
+    - [X] Contrast enhancement
+    - TODO: [ ] Thresholding
   - Create document-specific preprocessing
-    - [ ] Edge detection
-    - [ ] Perspective correction
-    - [ ] Border removal
-    - [ ] Shadow elimination
-  - Implement transfer learning model integration
-    - [ ] Select appropriate pre-trained model
-    - [ ] Create dataset for fine-tuning
-    - [ ] Set up model training pipeline
-    - [ ] Implement inference pipeline
-    - [ ] Create comparison view of before/after enhancement
+    - [X] Edge detection
+    - [X] Perspective correction
+    - [X] Border removal
+    - [X] Shadow elimination
+  <!-- DELAYED -->
+  <!-- - Implement transfer learning model integration -->
+  <!--   - [ ] Select appropriate pre-trained model -->
+  <!--   - [ ] Create dataset for fine-tuning -->
+  <!--   - [ ] Set up model training pipeline -->
+  <!--   - [ ] Implement inference pipeline -->
+  <!--   - [ ] Create comparison view of before/after enhancement -->
   - Optimize processing for performance
     - [ ] Implement caching mechanisms
     - [ ] Add batch processing capabilities
@@ -72,16 +73,16 @@
     - [ ] Windows installation guide
     - [ ] macOS installation guide
     - [ ] Linux installation guide
-    - [ ] Dependency requirements
+    - [X] Dependency requirements
   - Develop user manual
     - [ ] Interface overview
     - [ ] Workflow tutorials
     - [ ] Troubleshooting guide
     - [ ] FAQ section
   - Write technical documentation
-    - [ ] API documentation
+    - [X] API documentation
     - [ ] Class diagrams
-    - [ ] Implementation details
+    - [X] Implementation details
     - [ ] Extension guidelines
   - Create example documentation
     - [ ] Sample use cases
