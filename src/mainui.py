@@ -9,7 +9,7 @@ from PyQt6.QtGui import QPixmap, QIcon
 
 # --- Cyberpunk Neon Palette ---
 BACKGROUND_COLOR = "#000000"  # Deep Black
-PRIMARY_COLOR = "#00FFFF"     # Electric Cyan (for the H1 title)
+PRIMARY_COLOR = "#00FFFF"     # Electric Cyan
 TEXT_PRIMARY_COLOR = "#C0C0C0" # Light Gray/Silver
 GRADIENT_LEFT = "#7e57ff"
 GRADIENT_RIGHT = "#5ad9ff"
@@ -47,62 +47,65 @@ def mainui():
 
     window = QMainWindow()
     window.setWindowTitle("PyOCR")
-    window.resize(600, 600)
+    window.resize(400, 300)
 
     # Set the favicon (window icon)
     favicon_path = project_root / "assets" / "favicon.png"
     window.setWindowIcon(QIcon(str(favicon_path)))
 
+    # Central widget & layout
     central_widget = QWidget()
     window.setCentralWidget(central_widget)
-
-    layout = QVBoxLayout()
-    central_widget.setLayout(layout)
+    layout = QGridLayout()
+    layout.setContentsMargins(20, 20, 20, 20)
 
     # Logo
-    logo_path = project_root / "assets" / "logo.png" 
+    logo_path = project_root / "assets" / "logo.png"
     pixmap = QPixmap(str(logo_path)).scaled(140, 140, Qt.AspectRatioMode.KeepAspectRatio)
+    
     logo_label = QLabel()
     logo_label.setPixmap(pixmap)
-    logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-    layout.addWidget(logo_label)
+    logo_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
+    layout.addWidget(logo_label, 0, 0)
 
-    # Text input + Select button
-    input_row = QHBoxLayout()
+    # Input Row (TextBox + Button)
+    input_layout = QHBoxLayout()
     text_box = QLineEdit()
     text_box.setReadOnly(True)
     text_box.setPlaceholderText("Select an image...")
-    text_box.setFixedSize(450, 35)
+    text_box.setFixedSize(300, 40)
     text_box.setStyleSheet(f"""
         QLineEdit {{
             background-color: {GRADIENT_LEFT};
             color: white;
             padding: 5px;
             border-radius: 5px;
-            font-size: 12px;
+            font-size: 13px;
         }}
     """)
-    input_row.addWidget(text_box)
+    input_layout.addWidget(text_box)
 
     def select_file():
-        file_path, _ = QFileDialog.getOpenFileName(window, "Select Image", "", "Images (*.png )")
+        file_path, _ = QFileDialog.getOpenFileName(window, "Select Image", "", "Images (*.png)")
         if file_path:
             text_box.setText(file_path)
 
     select_button = QPushButton("Select")
-    select_button.clicked.connect(select_file)
+    select_button.setFixedSize(110, 30)
     select_button.setStyleSheet(f"""
         QPushButton {{
             background-color: {GRADIENT_RIGHT};
             color: black;
             border: none;
-            padding: 8px 12px;
+            padding: 8px;
+            font-size: 11px;
             border-radius: 5px;
-            font-size: 12px;
         }}
     """)
-    input_row.addWidget(select_button)
-    layout.addLayout(input_row)
+    select_button.clicked.connect(select_file)
+    input_layout.addWidget(select_button)
+
+    layout.addLayout(input_layout, 1, 0)
 
     # Process Button
     process_button = QPushButton("Process")
@@ -113,11 +116,11 @@ def mainui():
                 stop:0 #9c51ff, stop:1 #0dc668);
             color: white;
             border: none;
-            font-size: 12px;
+            font-size: 11px;
             border-radius: 4px;
         }
     """)
-    layout.addWidget(process_button, alignment=Qt.AlignmentFlag.AlignCenter)
+    layout.addWidget(process_button, 2, 0, alignment=Qt.AlignmentFlag.AlignCenter)
 
     # Output Terminal
     output = QTextEdit()
@@ -131,7 +134,7 @@ def mainui():
         padding: 10px;
     """)
     output.setText("the output terminal")
-    layout.addWidget(output, alignment=Qt.AlignmentFlag.AlignCenter)
+    layout.addWidget(output, 3, 0, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def process_action():
         if text_box.text():
@@ -140,6 +143,8 @@ def mainui():
             output.setText("Please select an image first.")
 
     process_button.clicked.connect(process_action)
+
+    central_widget.setLayout(layout)
 
     window.show()
     sys.exit(app.exec())
