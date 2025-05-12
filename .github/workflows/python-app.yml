@@ -65,12 +65,12 @@ jobs:
     - name: Build executable with PyInstaller (Linux)
       if: runner.os == 'Linux'
       run: |
-        pyinstaller --onefile --windowed --name OCR_App_${{ matrix.python-version }} src/main.py
+        pyinstaller --onefile --windowed --icon=assets/favicon.ico --name OCR_App_${{ matrix.python-version }} src/main.py
 
     - name: Build executable with PyInstaller (Windows)
       if: runner.os == 'Windows'
       run: |
-        pyinstaller --onefile --windowed --name OCR_App_${{ matrix.python-version }} src/main.py
+        pyinstaller --onefile --windowed --icon=assets/favicon.ico --name OCR_App_${{ matrix.python-version }} src/main.py
       # Build config can be passed after the command above.
       # Add app icons with --icon=app.ico.
       # Include non-Python files (e.g., images, configs) using --add-data.
