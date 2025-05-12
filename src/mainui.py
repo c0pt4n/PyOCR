@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QGridLayout, QWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QIcon
@@ -37,13 +38,16 @@ def mainui():
     """)
     # --- End Stylesheet ---
 
+    # Project root directory
+    project_root = Path(__file__).parent.parent
+
     window = QMainWindow()
     window.setWindowTitle("PyOCR")
     window.resize(400, 300) # width, height
 
     # Set the favicon (window icon)
-    favicon = QIcon("../assets/favicon.png")
-    window.setWindowIcon(favicon)
+    favicon_path = project_root / "assets" / "favicon.png"
+    window.setWindowIcon(QIcon(str(favicon_path)))
 
     central_widget = QWidget()
     window.setCentralWidget(central_widget)
@@ -51,8 +55,11 @@ def mainui():
     layout = QGridLayout()
     layout.setContentsMargins(20, 20, 20, 20)
 
+    # Load logo with absolute path
+    logo_path = project_root / "assets" / "logo.png"
+    pixmap = QPixmap(str(logo_path)).scaled(140, 140, Qt.AspectRatioMode.KeepAspectRatio)
+
     logo_label = QLabel()
-    pixmap = QPixmap("../assets/logo.png").scaled(140, 140, Qt.AspectRatioMode.KeepAspectRatio)
     logo_label.setPixmap(pixmap)
     logo_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
 
