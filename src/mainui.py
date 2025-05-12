@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QGridLayout, QWidget, QHBoxLayout, QLineEdit, QFileDialog, QPushButton, QTextEdit
+from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QGridLayout, QWidget, QHBoxLayout, QLineEdit, QPushButton, QTextEdit
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QIcon
 
