@@ -1,11 +1,13 @@
 import sys
 from pathlib import Path
-from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QGridLayout, QWidget, QHBoxLayout, QLineEdit, QPushButton, QTextEdit
+from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QGridLayout, QWidget, QHBoxLayout, QLineEdit, QPushButton, QTextEdit, QSlider, QVBoxLayout, QGroupBox, QRadioButton, QCheckBox
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QIcon
 
 # Custom modules
 from filsys.file_handler import FileSystemHandler, FileSelectionDialog
+from img_enhance.enhancer import ImageEnhancer, EnhancementParams
+from ocrMod.ocr_engine import OCREngine
 
 # --- Cyberpunk Neon Palette ---
 # Core Colors
@@ -164,6 +166,139 @@ def mainui():
     layout.addLayout(input_layout, 1, 0)
 
     # Process Button
+    process_layout = QVBoxLayout()
+    
+    # Mode selection group
+    mode_group = QGroupBox("Processing Mode")
+    mode_group.setStyleSheet(f"""
+        QGroupBox {{
+            color: {TEXT_PRIMARY_COLOR};
+            border: 1px solid {TEXTBOX_BORDER};
+            border-radius: 4px;
+            margin-top: 12px;
+            padding-top: 8px;
+        }}
+        QGroupBox::title {{
+            subcontrol-origin: margin;
+            left: 10px;
+            padding: 0 5px;
+        }}
+    """)
+    
+    mode_layout = QVBoxLayout(mode_group)
+    
+    # Radio buttons for auto/manual
+    auto_radio = QRadioButton("Auto")
+    manual_radio = QRadioButton("Manual")
+    auto_radio.setChecked(True)  # Default to auto
+    
+    auto_radio.setStyleSheet(f"""
+        QRadioButton {{
+            color: {TEXT_PRIMARY_COLOR};
+            spacing: 6px;
+        }}
+        QRadioButton::indicator {{
+            width: 14px;
+            height: 14px;
+            border-radius: 7px;
+            border: 1px solid {TEXTBOX_BORDER};
+        }}
+        QRadioButton::indicator:checked {{
+            background-color: {PRIMARY_BUTTON_BG};
+            border: 1px solid {PRIMARY_BUTTON_BG};
+        }}
+    """)
+    manual_radio.setStyleSheet(auto_radio.styleSheet())
+    
+    mode_layout.addWidget(auto_radio)
+    mode_layout.addWidget(manual_radio)
+    
+    process_layout.addWidget(mode_group)
+    
+    # Enhancement options - initially hidden, shown in manual mode
+    enhance_options = QGroupBox("Image Enhancement")
+    enhance_options.setStyleSheet(mode_group.styleSheet())
+    enhance_options.setVisible(False)  # Initially hidden for auto mode
+    
+    enhance_layout = QVBoxLayout(enhance_options)
+    
+    # Enhancement sliders
+    brightness_label = QLabel("Brightness:")
+    brightness_slider = QSlider(Qt.Orientation.Horizontal)
+    brightness_slider.setRange(50, 150)
+    brightness_slider.setValue(100)  # Default 1.0
+    
+    contrast_label = QLabel("Contrast:")
+    contrast_slider = QSlider(Qt.Orientation.Horizontal)
+    contrast_slider.setRange(50, 200)
+    contrast_slider.setValue(100)  # Default 1.0
+    
+    sharpness_label = QLabel("Sharpness:")
+    sharpness_slider = QSlider(Qt.Orientation.Horizontal)
+    sharpness_slider.setRange(0, 200)
+    sharpness_slider.setValue(100)  # Default 1.0
+    
+    # Checkbox options
+    denoise_check = QCheckBox("Denoise")
+    binarize_check = QCheckBox("Binarize")
+    deskew_check = QCheckBox("Deskew")
+    
+    slider_style = f"""
+        QSlider::groove:horizontal {{
+            height: 6px;
+            background: {TEXTBOX_BORDER};
+            border-radius: 3px;
+        }}
+        QSlider::handle:horizontal {{
+            background: {PRIMARY_BUTTON_BG};
+            width: 16px;
+            height: 16px;
+            margin: -5px 0;
+            border-radius: 8px;
+        }}
+        QSlider::sub-page:horizontal {{
+            background: {PRIMARY_BUTTON_BG};
+            border-radius: 3px;
+        }}
+    """
+    
+    checkbox_style = f"""
+        QCheckBox {{
+            color: {TEXT_PRIMARY_COLOR};
+            spacing: 6px;
+        }}
+        QCheckBox::indicator {{
+            width: 16px;
+            height: 16px;
+            border: 1px solid {TEXTBOX_BORDER};
+            border-radius: 3px;
+        }}
+        QCheckBox::indicator:checked {{
+            background-color: {PRIMARY_BUTTON_BG};
+            border: 1px solid {PRIMARY_BUTTON_BG};
+        }}
+    """
+    
+    brightness_slider.setStyleSheet(slider_style)
+    contrast_slider.setStyleSheet(slider_style)
+    sharpness_slider.setStyleSheet(slider_style)
+    denoise_check.setStyleSheet(checkbox_style)
+    binarize_check.setStyleSheet(checkbox_style)
+    deskew_check.setStyleSheet(checkbox_style)
+    
+    enhance_layout.addWidget(brightness_label)
+    enhance_layout.addWidget(brightness_slider)
+    enhance_layout.addWidget(contrast_label)
+    enhance_layout.addWidget(contrast_slider)
+    enhance_layout.addWidget(sharpness_label)
+    enhance_layout.addWidget(sharpness_slider)
+    enhance_layout.addWidget(denoise_check)
+    enhance_layout.addWidget(binarize_check)
+    enhance_layout.addWidget(deskew_check)
+    
+    process_layout.addWidget(enhance_options)
+    
+    # Process Button
     process_button = QPushButton("Process")
     process_button.setFixedSize(110, 30)
     process_button.setStyleSheet(f"""
@@ -181,7 +316,10 @@ def mainui():
             background-color: #1E8449;  /* Even darker shade */
         }}
     """)
-    layout.addWidget(process_button, 2, 0, alignment=Qt.AlignmentFlag.AlignCenter)
+    process_layout.addWidget(process_button, alignment=Qt.AlignmentFlag.AlignCenter)
+    
+    # Add the entire process layout to the main layout
+    layout.addLayout(process_layout, 2, 0, alignment=Qt.AlignmentFlag.AlignCenter)
 
     # Output Terminal
     output = QTextEdit()
@@ -199,11 +337,60 @@ def mainui():
     output.setText("the output terminal")
     layout.addWidget(output, 3, 0, alignment=Qt.AlignmentFlag.AlignCenter)
 
+    def toggle_enhance_options():
+        enhance_options.setVisible(manual_radio.isChecked())
+    
+    auto_radio.toggled.connect(toggle_enhance_options)
+    manual_radio.toggled.connect(toggle_enhance_options)
+    
+    # Create instances of our processing modules
+    img_enhancer = ImageEnhancer()
+    ocr_engine = OCREngine()
+    
     def process_action():
-        if text_box.text():
-            output.setText(f"Processing: {text_box.text()}")
-        else:
+        image_path = text_box.text()
+        if not image_path:
             output.setText("Please select an image first.")
+            return
+        
+        try:
+            # Configure enhancement parameters based on mode
+            if auto_radio.isChecked():
+                # Auto mode uses default parameters
+                params = EnhancementParams(
+                    brightness=1.1,  # Slight brightness increase
+                    contrast=1.2,    # Moderate contrast increase
+                    sharpness=1.2,   # Moderate sharpness increase
+                    denoise=True,    # Enable denoising
+                    binarize=True    # Enable binarization
+                )
+            else:
+                # Manual mode uses slider values
+                params = EnhancementParams(
+                    brightness=brightness_slider.value() / 100.0,
+                    contrast=contrast_slider.value() / 100.0,
+                    sharpness=sharpness_slider.value() / 100.0,
+                    denoise=denoise_check.isChecked(),
+                    binarize=binarize_check.isChecked(),
+                    deskew=deskew_check.isChecked()
+                )
+            
+            # Update enhancer with our parameters
+            img_enhancer.set_params(params)
+            
+            # Process and enhance the image
+            output.setText(f"Enhancing image: {image_path}...")
+            enhanced_image = img_enhancer.enhance(image_path)
+            
+            # Perform OCR on the enhanced image
+            output.setText(output.toPlainText() + "\nExtracting text...")
+            ocr_result = ocr_engine.process_pil_image(enhanced_image)
+            
+            # Display the final result
+            output.setText(f"OCR Result:\n\n{ocr_result}")
+            
+        except Exception as e:
+            output.setText(f"Error processing image: {str(e)}")
 
     process_button.clicked.connect(process_action)
 
