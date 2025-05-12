@@ -1,13 +1,31 @@
 import sys
 from pathlib import Path
-from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QGridLayout, QWidget
+from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QGridLayout, QWidget, QHBoxLayout, QLineEdit, QFileDialog, QPushButton, QTextEdit
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QIcon
 
 # --- Cyberpunk Neon Palette ---
-BACKGROUND_COLOR = "#000000"  # Deep Black
-PRIMARY_COLOR = "#00FFFF"     # Electric Cyan (for the H1 title)
-TEXT_PRIMARY_COLOR = "#C0C0C0" # Light Gray/Silver (for potential future default text)
+# Core Colors
+BACKGROUND_COLOR = "#0A0F14"  # Space Black (softer than pure black)
+TEXT_PRIMARY_COLOR = "#E0E3E7"  # Cool Mist White (better readability)
+
+# Text Boxes
+TEXTBOX_BG = "#1A1F27"        # Deep Space
+TEXTBOX_BORDER = "#3B4251"    # Cyber Gray
+TEXTBOX_FOCUS = "#5AD9FF"     # Neo-Cyan
+TEXTBOX_HOVER = "#4A90E2"     # Electric Blue
+
+# Buttons
+PRIMARY_BUTTON_BG = "#00B4D8"  # Tech Cyan (softer than electric)
+PRIMARY_BUTTON_TEXT = "#0A0F14" # Contrast Dark
+SECONDARY_BUTTON_BG = "#3B4251" # Cyber Gray
+SUCCESS_BUTTON_BG = "#2ECC71"   # Matrix Green
+DANGER_BUTTON_BG = "#FF6B6B"    # Alert Coral
+
+# States
+HOVER_STATE = "#0096C7"        # Deep Cyan
+ACTIVE_STATE = "#0077B6"       # Ocean Blue
+DISABLED_STATE = "#2D3748"     # Steel Gray
 # -----------------------------
 
 def mainui():
@@ -25,15 +43,40 @@ def mainui():
             color: {TEXT_PRIMARY_COLOR};
             background-color: transparent;
         }}
+        QLineEdit {{
+            background-color: {TEXTBOX_BG};
+            border: 2px solid {TEXTBOX_BORDER};
+            color: {TEXT_PRIMARY_COLOR};
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }}
+        QLineEdit:focus {{
+            border-color: {TEXTBOX_FOCUS};
+        }}
         QPushButton {{
-            background-color: transparent;
-            border: 1px solid {PRIMARY_COLOR};
-            color: {PRIMARY_COLOR};
-            padding: 5px;
+            background-color: {SECONDARY_BUTTON_BG};
+            color: {TEXT_PRIMARY_COLOR};
+            border: 1px solid {TEXTBOX_BORDER};
+            padding: 8px 16px;
+            border-radius: 4px;
+            min-width: 80px;
+            font-size: 14px;
         }}
         QPushButton:hover {{
-            background-color: {PRIMARY_COLOR};
-            color: {BACKGROUND_COLOR};
+            background-color: {HOVER_STATE};
+            border-color: {TEXTBOX_FOCUS};
+        }}
+        QPushButton:pressed {{
+            background-color: {ACTIVE_STATE};
+        }}
+        QTextEdit {{
+            background-color: {BACKGROUND_COLOR};
+            border: 1px solid {TEXTBOX_BORDER};
+            color: {TEXT_PRIMARY_COLOR};
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
         }}
     """)
     # --- End Stylesheet ---
@@ -65,6 +108,97 @@ def mainui():
 
     # Syntax: layout.addWidget(widget, row, column, [rowSpan, columnSpan])
     layout.addWidget(logo_label, 0, 0)
+
+    # Input Row (TextBox + Button)
+    input_layout = QHBoxLayout()
+    text_box = QLineEdit()
+    text_box.setReadOnly(True)
+    text_box.setPlaceholderText("Select an image...")
+    text_box.setFixedSize(300, 40)
+    text_box.setStyleSheet(f"""
+        QLineEdit {{
+            background-color: {TEXTBOX_BG};
+            border: 2px solid {TEXTBOX_BORDER};
+            color: {TEXT_PRIMARY_COLOR};
+            padding: 8px;
+            border-radius: 4px;
+        }}
+        QLineEdit:focus {{
+            border-color: {TEXTBOX_FOCUS};
+        }}
+    """)
+    input_layout.addWidget(text_box)
+
+    def select_file():
+        file_path, _ = QFileDialog.getOpenFileName(window, "Select Image", "", "Images (*.png)")
+        if file_path:
+            text_box.setText(file_path)
+
+    select_button = QPushButton("Select")
+    select_button.setFixedSize(110, 30)
+    select_button.setStyleSheet(f"""
+        QPushButton {{
+            background-color: {PRIMARY_BUTTON_BG};
+            color: {PRIMARY_BUTTON_TEXT};
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+        }}
+        QPushButton:hover {{
+            background-color: {HOVER_STATE};
+        }}
+        QPushButton:pressed {{
+            background-color: {ACTIVE_STATE};
+        }}
+    """)
+    select_button.clicked.connect(select_file)
+    input_layout.addWidget(select_button)
+
+    layout.addLayout(input_layout, 1, 0)
+
+    # Process Button
+    process_button = QPushButton("Process")
+    process_button.setFixedSize(110, 30)
+    process_button.setStyleSheet(f"""
+        QPushButton {{
+            background-color: {SUCCESS_BUTTON_BG};
+            color: {BACKGROUND_COLOR};
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+        }}
+        QPushButton:hover {{
+            background-color: #25A35A;  /* Darker shade of success */
+        }}
+        QPushButton:pressed {{
+            background-color: #1E8449;  /* Even darker shade */
+        }}
+    """)
+    layout.addWidget(process_button, 2, 0, alignment=Qt.AlignmentFlag.AlignCenter)
+
+    # Output Terminal
+    output = QTextEdit()
+    output.setReadOnly(True)
+    output.setFixedSize(400, 200)
+    output.setStyleSheet(f"""
+        QTextEdit {{
+            background-color: {BACKGROUND_COLOR};
+            border: 1px solid {TEXTBOX_BORDER};
+            color: {TEXT_PRIMARY_COLOR};
+            padding: 10px;
+            font-family: monospace;
+        }}
+    """)
+    output.setText("the output terminal")
+    layout.addWidget(output, 3, 0, alignment=Qt.AlignmentFlag.AlignCenter)
+
+    def process_action():
+        if text_box.text():
+            output.setText(f"Processing: {text_box.text()}")
+        else:
+            output.setText("Please select an image first.")
+
+    process_button.clicked.connect(process_action)
 
     central_widget.setLayout(layout)
 
