@@ -1,0 +1,81 @@
+\section{OCR Module Overview}
+\seclabel{overview}
+
+The OCR (Optical Character Recognition) module provides a simple yet powerful interface to the Tesseract OCR engine. It allows users to extract text from images in various formats, supporting multiple languages and configuration options.
+
+\subsection{Module Structure}
+
+The OCR module consists of the following components:
+
+\begin{itemize}
+  \item \textbf{ocr\_engine.py}: Core functionality for text extraction using Tesseract
+  \item \textbf{example.py}: Example script demonstrating how to use the module
+\end{itemize}
+
+\subsection{Features}
+
+The OCR module offers the following features:
+
+\begin{itemize}
+  \item Text extraction from image files or PIL Image objects
+  \item Support for multiple output formats:
+    \begin{itemize}
+      \item Plain text
+      \item hOCR (HTML with layout information)
+      \item PDF
+      \item TSV (Tab-Separated Values)
+      \item ALTO XML
+      \item PAGE XML
+    \end{itemize}
+  \item Support for multiple languages
+  \item Configurable OCR parameters
+  \item Simple and intuitive API
+\end{itemize}
+
+\subsection{Requirements}
+
+To use the OCR module, you need:
+
+\begin{itemize}
+  \item Python 3.6 or higher
+  \item Tesseract OCR (version 4.0 or higher recommended)
+  \item pytesseract Python package
+  \item Pillow (PIL Fork) Python package
+\end{itemize}
+
+\subsection{Installation}
+
+\subsubsection{Installing Tesseract OCR}
+
+Before using the module, you need to install Tesseract OCR on your system:
+
+\begin{itemize}
+  \item \textbf{Windows}: Download and install from \url{https://github.com/UB-Mannheim/tesseract/wiki}
+  \item \textbf{macOS}: Install via Homebrew with \texttt{brew install tesseract}
+  \item \textbf{Linux}: Install via package manager, e.g., \texttt{apt install tesseract-ocr}
+\end{itemize}
+
+\subsubsection{Installing Required Python Packages}
+
+Install the required Python packages:
+
+\begin{lstlisting}[language=bash]
+pip install pytesseract pillow
+\end{lstlisting}
+
+\subsection{Basic Usage}
+
+Here's a simple example of how to use the OCR module:
+
+\begin{lstlisting}[language=Python]
+from src.ocrMod.ocr_engine import OCREngine
+
+# Initialize the OCR engine
+ocr = OCREngine()
+
+# Extract text from an image
+text = ocr.process_image("path/to/image.jpg")
+print(text)
+\end{lstlisting}
+
+For more advanced usage examples, see \secref{example}. 
