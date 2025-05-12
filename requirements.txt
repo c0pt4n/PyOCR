@@ -6,3 +6,4 @@ opencv-python
 pyinstaller
 pytesseract
 pytest
+PyQt6
