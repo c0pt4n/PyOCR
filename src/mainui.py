@@ -4,6 +4,9 @@ from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QGridLayout, QWid
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QIcon
 
+# Custom modules
+from filsys.file_handler import FileSystemHandler, FileSelectionDialog
+
 # --- Cyberpunk Neon Palette ---
 # Core Colors
 BACKGROUND_COLOR = "#0A0F14"  # Space Black (softer than pure black)
@@ -129,10 +132,14 @@ def mainui():
     """)
     input_layout.addWidget(text_box)
 
+    file_handler = FileSystemHandler(window)
     def select_file():
-        file_path, _ = QFileDialog.getOpenFileName(window, "Select Image", "", "Images (*.png)")
+        # Use the custom file selection dialog
+        file_path = FileSelectionDialog.get_image_file(window, file_handler)
         if file_path:
             text_box.setText(file_path)
+            # Optional: Add to recent files through handler
+            file_handler._add_to_recent_files(file_path)
 
     select_button = QPushButton("Select")
     select_button.setFixedSize(110, 30)
