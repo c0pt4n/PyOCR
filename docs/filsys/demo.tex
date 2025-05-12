@@ -1,0 +1,176 @@
+\section{Demo Application}
+
+\subsection{Overview}
+
+The File System Handler module includes a demo application that showcases its functionality. The demo provides a graphical interface to test all the file system operations provided by the module.
+
+\subsection{Class Description}
+
+The \texttt{FileSystemDemo} class is a QMainWindow that demonstrates the file system handler functionality.
+
+\begin{verbatim}
+class FileSystemDemo(QMainWindow):
+    """Demo application for the file system handler."""
+    
+    def __init__(self):
+        super().__init__()
+        
+        self.setWindowTitle("File System Handler Demo")
+        self.setMinimumSize(600, 400)
+        
+        self.file_handler = FileSystemHandler(self)
+        self.selected_file = None
+        
+        self._setup_ui()
+\end{verbatim}
+
+\subsection{Features}
+
+The demo application demonstrates the following features:
+
+\begin{itemize}
+    \item Basic file selection using standard dialogs
+    \item Enhanced file selection with recent files list
+    \item Directory selection
+    \item File saving with format selection
+    \item Enhanced save dialog with additional options
+    \item File type validation
+    \item Results logging
+\end{itemize}
+
+\subsection{UI Components}
+
+The demo includes the following UI components:
+
+\begin{itemize}
+    \item Title label
+    \item File selection buttons
+    \item Directory selection button
+    \item Save file buttons
+    \item Results text area
+\end{itemize}
+
+\subsection{Methods}
+
+\subsubsection{\_setup\_ui}
+
+Sets up the UI components.
+
+\begin{verbatim}
+def _setup_ui(self):
+    """Set up the UI components."""
+\end{verbatim}
+
+\subsubsection{\_on\_select\_file\_clicked}
+
+Handles the select file button click event.
+
+\begin{verbatim}
+def _on_select_file_clicked(self):
+    """Handle select file button click."""
+\end{verbatim}
+
+\subsubsection{\_on\_select\_file\_enhanced\_clicked}
+
+Handles the enhanced select file button click event.
+
+\begin{verbatim}
+def _on_select_file_enhanced_clicked(self):
+    """Handle enhanced select file button click."""
+\end{verbatim}
+
+\subsubsection{\_on\_select\_dir\_clicked}
+
+Handles the select directory button click event.
+
+\begin{verbatim}
+def _on_select_dir_clicked(self):
+    """Handle select directory button click."""
+\end{verbatim}
+
+\subsubsection{\_on\_save\_file\_clicked}
+
+Handles the save file button click event.
+
+\begin{verbatim}
+def _on_save_file_clicked(self):
+    """Handle save file button click."""
+\end{verbatim}
+
+\subsubsection{\_on\_save\_file\_enhanced\_clicked}
+
+Handles the enhanced save file button click event.
+
+\begin{verbatim}
+def _on_save_file_enhanced_clicked(self):
+    """Handle enhanced save file button click."""
+\end{verbatim}
+
+\subsubsection{\_log\_result}
+
+Adds a message to the results text area.
+
+\begin{verbatim}
+def _log_result(self, message):
+    """Add a message to the results text area."""
+\end{verbatim}
+
+\subsection{Running the Demo}
+
+To run the demo application, execute the following command:
+
+\begin{verbatim}
+python src/filsys/demo.py
+\end{verbatim}
+
+\subsection{Demo Workflow}
+
+\begin{enumerate}
+    \item Launch the demo application
+    \item Click "Select Image File" to choose an image file using the standard dialog
+    \item Click "Select Image File (Enhanced Dialog)" to use the enhanced dialog with recent files
+    \item Click "Select Directory" to choose a directory
+    \item Click "Save Output" to select a save location using the standard dialog
+    \item Click "Save Output (Enhanced Dialog)" to use the enhanced save dialog with format selection
+    \item View the results in the text area
+\end{enumerate}
+
+\subsection{Styling}
+
+The demo application includes a dark-themed stylesheet for a modern appearance:
+
+\begin{verbatim}
+app.setStyleSheet("""
+    QMainWindow, QDialog {
+        background-color: #2d2d2d;
+    }
+    QWidget {
+        color: #e0e0e0;
+    }
+    QPushButton {
+        background-color: #3a3a3a;
+        border: 1px solid #5a5a5a;
+        padding: 5px 10px;
+        border-radius: 3px;
+    }
+    QPushButton:hover {
+        background-color: #4a4a4a;
+    }
+    QTextEdit {
+        background-color: #1d1d1d;
+        border: 1px solid #5a5a5a;
+    }
+    QLabel {
+        color: #e0e0e0;
+    }
+    QComboBox {
+        background-color: #3a3a3a;
+        border: 1px solid #5a5a5a;
+        padding: 3px;
+    }
+    QListWidget {
+        background-color: #1d1d1d;
+        border: 1px solid #5a5a5a;
+    }
+""")
+\end{verbatim} 
