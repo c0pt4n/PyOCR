@@ -1,0 +1,74 @@
+\section{File System Handler}
+
+\subsection{Overview}
+
+The File System Handler module provides cross-platform file system operations for the PyOCR application. It handles file selection, saving, and validation across Windows and Linux operating systems.
+
+\subsection{Key Features}
+
+\begin{itemize}
+    \item Cross-platform file path handling for Windows and Linux
+    \item File selection dialogs with type filtering
+    \item Save dialogs with format selection
+    \item Directory selection functionality
+    \item File type validation for supported image formats
+    \item Recent files management
+    \item Enhanced dialogs with additional user-friendly features
+\end{itemize}
+
+\subsection{Module Structure}
+
+The File System Handler module consists of the following components:
+
+\begin{itemize}
+    \item \textbf{FileSystemHandler}: Core class that provides file system operations
+    \item \textbf{FileSelectionDialog}: Enhanced dialog for selecting image files
+    \item \textbf{SaveFileDialog}: Enhanced dialog for saving output files
+\end{itemize}
+
+\subsection{Supported File Types}
+
+\subsubsection{Input Image Formats}
+\begin{itemize}
+    \item PNG (.png)
+    \item JPEG (.jpg, .jpeg)
+    \item TIFF (.tif, .tiff)
+\end{itemize}
+
+\subsubsection{Output Formats}
+\begin{itemize}
+    \item Plain Text (.txt)
+    \item HTML/hOCR (.html)
+    \item PDF (.pdf)
+    \item Text-only PDF (.pdf)
+    \item TSV (.tsv)
+    \item ALTO XML (.xml)
+    \item PAGE XML (.xml)
+\end{itemize}
+
+\subsection{Cross-Platform Compatibility}
+
+The module handles platform-specific file path differences between Windows and Linux:
+
+\begin{itemize}
+    \item Path separators (backslash vs forward slash)
+    \item Drive letters (Windows) vs root directories (Linux)
+    \item Home directory resolution
+\end{itemize}
+
+\subsection{Demo Application}
+
+A demo application is provided to showcase the file system handler functionality:
+
+\begin{verbatim}
+python src/filsys/demo.py
+\end{verbatim}
+
+The demo demonstrates:
+\begin{itemize}
+    \item Image file selection
+    \item Directory selection
+    \item Output file saving
+    \item File type validation
+    \item Recent files management
+\end{itemize} 

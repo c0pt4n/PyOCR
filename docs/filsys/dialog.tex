@@ -1,0 +1,216 @@
+\section{Enhanced Dialog Classes}
+
+\subsection{FileSelectionDialog Class}
+
+\subsubsection{Class Description}
+
+The \texttt{FileSelectionDialog} class provides an enhanced file selection dialog with additional features beyond the standard QFileDialog. It includes a recent files list, file type filtering, and signal emission on selection.
+
+\subsubsection{Class Definition}
+
+\begin{verbatim}
+class FileSelectionDialog(QDialog):
+    """
+    Enhanced file selection dialog with additional features.
+    Provides a custom interface for selecting files with preview and recent files.
+    """
+    file_selected = pyqtSignal(str)
+    
+    def __init__(self, parent=None, file_handler=None):
+        super().__init__(parent)
+        self.file_handler = file_handler or FileSystemHandler(self)
+        self.selected_file = None
+        
+        self.setWindowTitle("Select Image File")
+        self.setMinimumSize(600, 400)
+        
+        self._setup_ui()
+\end{verbatim}
+
+\subsubsection{Constructor Parameters}
+
+\begin{itemize}
+    \item \textbf{parent}: Optional parent widget for the dialog
+    \item \textbf{file\_handler}: Optional FileSystemHandler instance (creates one if not provided)
+\end{itemize}
+
+\subsubsection{Signals}
+
+\begin{itemize}
+    \item \textbf{file\_selected}: Emitted when a file is selected, with the file path as parameter
+\end{itemize}
+
+\subsubsection{Attributes}
+
+\begin{itemize}
+    \item \textbf{file\_handler}: FileSystemHandler instance for file operations
+    \item \textbf{selected\_file}: Currently selected file path
+    \item \textbf{type\_combo}: ComboBox for selecting file types
+    \item \textbf{recent\_list}: ListWidget displaying recent files
+\end{itemize}
+
+\subsubsection{Methods}
+
+\paragraph{\_setup\_ui}
+
+Sets up the dialog UI components.
+
+\begin{verbatim}
+def _setup_ui(self):
+    """Set up the dialog UI components"""
+\end{verbatim}
+
+\paragraph{\_on\_browse\_clicked}
+
+Handles the browse button click event.
+
+\begin{verbatim}
+def _on_browse_clicked(self):
+    """Handle browse button click"""
+\end{verbatim}
+
+\paragraph{\_on\_recent\_file\_selected}
+
+Handles selection from the recent files list.
+
+\begin{verbatim}
+def _on_recent_file_selected(self, item):
+    """Handle selection from recent files list"""
+\end{verbatim}
+
+\paragraph{get\_image\_file}
+
+Static method to create and show the dialog.
+
+\begin{verbatim}
+@classmethod
+def get_image_file(cls, parent=None, file_handler=None):
+    """
+    Static method to create and show the dialog.
+    
+    Args:
+        parent: Parent widget
+        file_handler: FileSystemHandler instance
+        
+    Returns:
+        Selected file path or None if canceled
+    """
+\end{verbatim}
+
+\textbf{Parameters:}
+\begin{itemize}
+    \item \textbf{parent}: Parent widget
+    \item \textbf{file\_handler}: FileSystemHandler instance
+\end{itemize}
+
+\textbf{Returns:} Selected file path or None if canceled
+
+\subsubsection{Usage Example}
+
+\begin{verbatim}
+# Get a file path using the enhanced dialog
+file_path = FileSelectionDialog.get_image_file(parent_widget)
+if file_path:
+    print(f"Selected file: {file_path}")
+\end{verbatim}
+
+\subsection{SaveFileDialog Class}
+
+\subsubsection{Class Description}
+
+The \texttt{SaveFileDialog} class provides an enhanced save file dialog with format selection and additional options beyond the standard QFileDialog.
+
+\subsubsection{Class Definition}
+
+\begin{verbatim}
+class SaveFileDialog(QDialog):
+    """
+    Enhanced save file dialog with format selection.
+    """
+    def __init__(self, parent=None, file_handler=None):
+        super().__init__(parent)
+        self.file_handler = file_handler or FileSystemHandler(self)
+        self.selected_file = None
+        self.selected_format = "txt"
+        
+        self.setWindowTitle("Save Output")
+        self.setMinimumSize(500, 300)
+        
+        self._setup_ui()
+\end{verbatim}
+
+\subsubsection{Constructor Parameters}
+
+\begin{itemize}
+    \item \textbf{parent}: Optional parent widget for the dialog
+    \item \textbf{file\_handler}: Optional FileSystemHandler instance (creates one if not provided)
+\end{itemize}
+
+\subsubsection{Attributes}
+
+\begin{itemize}
+    \item \textbf{file\_handler}: FileSystemHandler instance for file operations
+    \item \textbf{selected\_file}: Selected output file path
+    \item \textbf{selected\_format}: Selected output format
+    \item \textbf{format\_combo}: ComboBox for selecting output formats
+    \item \textbf{auto\_copy\_cb}: CheckBox for auto-copy to clipboard option
+\end{itemize}
+
+\subsubsection{Methods}
+
+\paragraph{\_setup\_ui}
+
+Sets up the dialog UI components.
+
+\begin{verbatim}
+def _setup_ui(self):
+    """Set up the dialog UI components"""
+\end{verbatim}
+
+\paragraph{\_on\_save\_clicked}
+
+Handles the save button click event.
+
+\begin{verbatim}
+def _on_save_clicked(self):
+    """Handle save button click"""
+\end{verbatim}
+
+\paragraph{get\_save\_location}
+
+Static method to create and show the dialog.
+
+\begin{verbatim}
+@classmethod
+def get_save_location(cls, parent=None, file_handler=None):
+    """
+    Static method to create and show the dialog.
+    
+    Args:
+        parent: Parent widget
+        file_handler: FileSystemHandler instance
+        
+    Returns:
+        Tuple of (file_path, format, auto_copy) or None if canceled
+    """
+\end{verbatim}
+
+\textbf{Parameters:}
+\begin{itemize}
+    \item \textbf{parent}: Parent widget
+    \item \textbf{file\_handler}: FileSystemHandler instance
+\end{itemize}
+
+\textbf{Returns:} Tuple of (file\_path, format, auto\_copy) or None if canceled
+
+\subsubsection{Usage Example}
+
+\begin{verbatim}
+# Get save location using the enhanced dialog
+result = SaveFileDialog.get_save_location(parent_widget)
+if result:
+    file_path, format_name, auto_copy = result
+    print(f"Save location: {file_path}")
+    print(f"Format: {format_name}")
+    print(f"Auto-copy: {auto_copy}")
+\end{verbatim} 

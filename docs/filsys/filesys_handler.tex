@@ -1,0 +1,217 @@
+\section{FileSystemHandler Class}
+
+\subsection{Class Description}
+
+The \texttt{FileSystemHandler} class is the core component of the file system handler module. It provides methods for file selection, saving, and validation across different platforms.
+
+\subsection{Class Definition}
+
+\begin{verbatim}
+class FileSystemHandler:
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.system = platform.system()
+        self.recent_files = []
+        self.max_recent_files = 10
+        self.last_directory = str(Path.home())
+\end{verbatim}
+
+\subsection{Constructor Parameters}
+
+\begin{itemize}
+    \item \textbf{parent}: Optional parent widget for dialogs (typically a QWidget)
+\end{itemize}
+
+\subsection{Attributes}
+
+\begin{itemize}
+    \item \textbf{parent}: Parent widget for dialogs
+    \item \textbf{system}: Current operating system (Windows, Linux, etc.)
+    \item \textbf{recent\_files}: List of recently used files
+    \item \textbf{max\_recent\_files}: Maximum number of recent files to track
+    \item \textbf{last\_directory}: Last directory accessed (defaults to user's home)
+\end{itemize}
+
+\subsection{Supported File Types}
+
+The class defines dictionaries for supported file types:
+
+\begin{verbatim}
+# Supported image file types
+IMAGE_TYPES = {
+    "PNG Files": "*.png",
+    "JPEG Files": "*.jpg *.jpeg",
+    "TIFF Files": "*.tif *.tiff"
+}
+
+# Supported output file types
+OUTPUT_TYPES = {
+    "Plain Text": "*.txt",
+    "HTML (hOCR)": "*.html",
+    "PDF": "*.pdf",
+    "Text-only PDF": "*.pdf",
+    "TSV": "*.tsv",
+    "ALTO XML": "*.xml",
+    "PAGE XML": "*.xml"
+}
+
+# Maps output format names to tesseract output format parameters
+OUTPUT_FORMAT_MAP = {
+    "Plain Text": "txt",
+    "HTML (hOCR)": "hocr",
+    "PDF": "pdf",
+    "Text-only PDF": "pdf",
+    "TSV": "tsv",
+    "ALTO XML": "alto",
+    "PAGE XML": "page"
+}
+\end{verbatim}
+
+\subsection{Methods}
+
+\subsubsection{select\_image\_file}
+
+Opens a file dialog to select an image file.
+
+\begin{verbatim}
+def select_image_file(self) -> Optional[str]:
+    """
+    Open a file dialog to select an image file.
+    
+    Returns:
+        Selected file path or None if canceled
+    """
+\end{verbatim}
+
+\textbf{Returns:} Selected file path as string, or None if selection was canceled
+
+\subsubsection{select\_output\_file}
+
+Opens a file dialog to select where to save the output file.
+
+\begin{verbatim}
+def select_output_file(self, default_format: str = "Plain Text") -> Optional[Tuple[str, str]]:
+    """
+    Open a file dialog to select where to save the output file.
+    
+    Args:
+        default_format: Default output format
+        
+    Returns:
+        Tuple of (file_path, format_name) or None if canceled
+    """
+\end{verbatim}
+
+\textbf{Parameters:}
+\begin{itemize}
+    \item \textbf{default\_format}: Default output format to select (default: "Plain Text")
+\end{itemize}
+
+\textbf{Returns:} Tuple of (file\_path, format\_name), or None if canceled
+
+\subsubsection{select\_directory}
+
+Opens a dialog to select a directory.
+
+\begin{verbatim}
+def select_directory(self) -> Optional[str]:
+    """
+    Open a dialog to select a directory.
+    
+    Returns:
+        Selected directory path or None if canceled
+    """
+\end{verbatim}
+
+\textbf{Returns:} Selected directory path as string, or None if selection was canceled
+
+\subsubsection{validate\_file\_type}
+
+Checks if the file is one of the supported image types.
+
+\begin{verbatim}
+def validate_file_type(self, file_path: str) -> bool:
+    """
+    Check if the file is one of the supported image types.
+    
+    Args:
+        file_path: Path to the file to validate
+        
+    Returns:
+        True if file type is supported, False otherwise
+    """
+\end{verbatim}
+
+\textbf{Parameters:}
+\begin{itemize}
+    \item \textbf{file\_path}: Path to the file to validate
+\end{itemize}
+
+\textbf{Returns:} True if file type is supported, False otherwise
+
+\subsubsection{get\_recent\_files}
+
+Returns the list of recent files.
+
+\begin{verbatim}
+def get_recent_files(self) -> List[str]:
+    """
+    Get the list of recent files.
+    
+    Returns:
+        List of recent file paths
+    """
+\end{verbatim}
+
+\textbf{Returns:} List of recent file paths
+
+\subsection{Private Methods}
+
+\subsubsection{\_add\_to\_recent\_files}
+
+Adds a file to the recent files list.
+
+\begin{verbatim}
+def _add_to_recent_files(self, file_path: str) -> None:
+    """
+    Add a file to the recent files list.
+    
+    Args:
+        file_path: Path to add to recent files
+    """
+\end{verbatim}
+
+\textbf{Parameters:}
+\begin{itemize}
+    \item \textbf{file\_path}: Path to add to recent files
+\end{itemize}
+
+\subsection{Usage Example}
+
+\begin{verbatim}
+# Create a file system handler instance
+file_handler = FileSystemHandler(parent_widget)
+
+# Select an image file
+file_path = file_handler.select_image_file()
+if file_path:
+    print(f"Selected file: {file_path}")
+    
+    # Validate file type
+    if file_handler.validate_file_type(file_path):
+        print("File type is valid")
+    else:
+        print("File type is not supported")
+
+# Save output to a file
+result = file_handler.select_output_file("PDF")
+if result:
+    file_path, format_name = result
+    print(f"Save location: {file_path}")
+    print(f"Format: {format_name}")
+
+# Select a directory
+directory = file_handler.select_directory()
+if directory:
+    print(f"Selected directory: {directory}")
+\end{verbatim} 
