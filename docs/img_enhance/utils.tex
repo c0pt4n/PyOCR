@@ -1,0 +1,155 @@
+\section{Utility Functions Module (utils.py)}
+\seclabel{utils}
+
+The \texttt{utils.py} module provides a collection of utility functions that support the image enhancement process. These functions handle tasks such as parameter saving/loading, image comparison, metrics visualization, and format handling.
+
+\subsection{Parameter Management}
+
+\subsubsection{save\_params\_to\_json}
+\begin{lstlisting}[language=Python]
+def save_params_to_json(params: EnhancementParams, output_path: str) -> None
+\end{lstlisting}
+
+Saves enhancement parameters to a JSON file for later reuse.
+
+\begin{itemize}
+  \item \textbf{params}: An \texttt{EnhancementParams} object containing the enhancement settings
+  \item \textbf{output\_path}: Path where the JSON file will be saved
+\end{itemize}
+
+\subsubsection{load\_params\_from\_json}
+\begin{lstlisting}[language=Python]
+def load_params_from_json(input_path: str) -> EnhancementParams
+\end{lstlisting}
+
+Loads enhancement parameters from a previously saved JSON file.
+
+\begin{itemize}
+  \item \textbf{input\_path}: Path to the JSON file containing parameters
+  \item \textbf{Returns}: An \texttt{EnhancementParams} object with the loaded settings
+\end{itemize}
+
+\subsection{Image Comparison}
+
+\subsubsection{create\_comparison\_image}
+\begin{lstlisting}[language=Python]
+def create_comparison_image(original: Image.Image, 
+                           enhanced: Image.Image, 
+                           params: Optional[EnhancementParams] = None,
+                           title: str = "Image Enhancement Comparison") -> Image.Image
+\end{lstlisting}
+
+Creates a side-by-side comparison of the original and enhanced images, optionally displaying the enhancement parameters used.
+
+\begin{itemize}
+  \item \textbf{original}: The original PIL Image
+  \item \textbf{enhanced}: The enhanced PIL Image
+  \item \textbf{params}: Optional EnhancementParams to display on the comparison image
+  \item \textbf{title}: Title for the comparison image
+  \item \textbf{Returns}: A new PIL Image with the side-by-side comparison
+\end{itemize}
+
+This function is particularly useful for visually evaluating the effects of enhancement operations. The comparison image includes:
+\begin{itemize}
+  \item Original and enhanced images side by side
+  \item Labels for each image
+  \item Title at the top
+  \item Enhancement parameters displayed at the bottom (if provided)
+\end{itemize}
+
+\subsection{Enhancement Analysis}
+
+\subsubsection{plot\_enhancement\_metrics}
+\begin{lstlisting}[language=Python]
+def plot_enhancement_metrics(original_image: Union[str, Image.Image], 
+                            enhanced_image: Union[str, Image.Image],
+                            params: EnhancementParams,
+                            show_plot: bool = True,
+                            save_path: Optional[str] = None) -> None
+\end{lstlisting}
+
+Generates plots showing the effects of enhancement operations through histograms and visual comparison.
+
+\begin{itemize}
+  \item \textbf{original\_image}: Path to the original image or a PIL Image object
+  \item \textbf{enhanced\_image}: Path to the enhanced image or a PIL Image object
+  \item \textbf{params}: Enhancement parameters used
+  \item \textbf{show\_plot}: Whether to display the plot interactively
+  \item \textbf{save\_path}: Optional path to save the plot as an image file
+\end{itemize}
+
+The generated plot includes:
+\begin{itemize}
+  \item Original and enhanced images
+  \item Grayscale histogram comparison
+  \item RGB channel histograms comparison
+  \item Summary of applied enhancement parameters
+\end{itemize}
+
+This function is valuable for quantitative analysis of enhancement effects and understanding how specific parameters affect image properties.
+
+\subsection{Format Handling}
+
+\subsubsection{get\_supported\_formats}
+\begin{lstlisting}[language=Python]
+def get_supported_formats() -> List[str]
+\end{lstlisting}
+
+Returns a list of supported image file formats for input and output operations.
+
+\begin{itemize}
+  \item \textbf{Returns}: List of supported image format extensions (e.g., '.jpg', '.png', etc.)
+\end{itemize}
+
+\subsection{Usage Examples}
+
+\subsubsection{Saving and Loading Parameters}
+\begin{lstlisting}[language=Python]
+# Create enhancement parameters
+params = EnhancementParams(brightness=1.2, contrast=1.3, sharpness=1.5)
+
+# Save parameters to a file
+save_params_to_json(params, "my_enhancement_params.json")
+
+# Later, load the parameters
+loaded_params = load_params_from_json("my_enhancement_params.json")
+\end{lstlisting}
+
+\subsubsection{Creating a Comparison Image}
+\begin{lstlisting}[language=Python]
+from PIL import Image
+from src.img_enhance.enhancer import ImageEnhancer, EnhancementParams
+from src.img_enhance.utils import create_comparison_image
+
+# Load original image
+original = Image.open("document.jpg")
+
+# Create enhancer and parameters
+params = EnhancementParams(brightness=1.2, contrast=1.5, binarize=True)
+enhancer = ImageEnhancer(params)
+
+# Enhance image
+enhanced = enhancer.enhance(original)
+
+# Create and save comparison
+comparison = create_comparison_image(original, enhanced, params)
+comparison.save("document_comparison.png")
+\end{lstlisting}
+
+\subsubsection{Analyzing Enhancement Effects}
+\begin{lstlisting}[language=Python]
+from src.img_enhance.utils import plot_enhancement_metrics
+from src.img_enhance.enhancer import EnhancementParams
+
+# Define parameters used
+params = EnhancementParams(brightness=1.2, contrast=1.3, denoise=True)
+
+# Generate and save analysis plot
+plot_enhancement_metrics(
+    "original.jpg",
+    "enhanced.jpg",
+    params,
+    show_plot=False,
+    save_path="enhancement_analysis.png"
+)
+\end{lstlisting} 
