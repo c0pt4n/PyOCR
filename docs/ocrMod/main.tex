@@ -1,0 +1,85 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{listings}
+
+% Enhanced hyperref setup for better cross-referencing
+\usepackage[
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=magenta,
+  urlcolor=cyan,
+  citecolor=green,
+  pdftitle={PyOCR OCR Module Documentation},
+  pdfauthor={PyOCR Development Team},
+  pdfsubject={Optical Character Recognition},
+  pdfkeywords={OCR, text recognition, tesseract, document processing},
+  pdftoolbar=true,
+  pdfmenubar=true,
+  bookmarks=true,
+  bookmarksopen=true,
+  bookmarksnumbered=true,
+  pdfstartview=FitH
+]{hyperref}
+
+% Labels for sections to enable cross-references
+\newcommand{\seclabel}[1]{\label{sec:#1}}
+\newcommand{\secref}[1]{\hyperref[sec:#1]{Section~\ref*{sec:#1}}}
+\newcommand{\modulelabel}[1]{\label{module:#1}}
+\newcommand{\moduleref}[1]{\hyperref[module:#1]{the \texttt{#1} module}}
+
+% Code highlighting settings
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\title{PyOCR OCR Module Documentation}
+\author{PyOCR Development Team}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% Overview
+\input{overview}
+
+\newpage
+% Core Module: ocr_engine.py
+\input{ocr_engine}
+
+\newpage
+% Example Usage
+\input{example}
+
+\end{document} 

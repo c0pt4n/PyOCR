@@ -1,0 +1,196 @@
+\section{OCR Engine Module (ocr\_engine.py)}
+\seclabel{ocr_engine}
+
+The \texttt{ocr\_engine.py} module provides the core functionality for text extraction using the Tesseract OCR engine. It encapsulates the Tesseract functionality in a simple, easy-to-use Python class.
+
+\subsection{OCREngine Class}
+
+\begin{lstlisting}[language=Python]
+class OCREngine:
+    def __init__(self, tesseract_cmd: Optional[str] = None):
+        ...
+\end{lstlisting}
+
+The \texttt{OCREngine} class is the main interface to the Tesseract OCR engine. It provides methods for extracting text from images in various formats.
+
+\subsubsection{Constructor}
+
+\begin{lstlisting}[language=Python]
+def __init__(self, tesseract_cmd: Optional[str] = None):
+\end{lstlisting}
+
+Initializes the OCR engine.
+
+\begin{itemize}
+  \item \textbf{tesseract\_cmd}: Path to the tesseract executable. If None, uses the default path.
+\end{itemize}
+
+\subsubsection{process\_image Method}
+
+\begin{lstlisting}[language=Python]
+def process_image(self, 
+                  image_path: str, 
+                  lang: str = 'eng',
+                  output_format: str = 'text',
+                  config: str = '') -> Union[str, Dict]:
+\end{lstlisting}
+
+Processes an image file and extracts text using Tesseract OCR.
+
+\begin{itemize}
+  \item \textbf{image\_path}: Path to the image file
+  \item \textbf{lang}: Language(s) to use for OCR (default: 'eng')
+  \item \textbf{output\_format}: Output format ('text', 'hocr', 'pdf', 'tsv', 'alto', 'page')
+  \item \textbf{config}: Additional configuration parameters for Tesseract
+  \item \textbf{Returns}: Extracted text or data in the specified format
+\end{itemize}
+
+\subsubsection{process\_pil\_image Method}
+
+\begin{lstlisting}[language=Python]
+def process_pil_image(self,
+                     image: Image.Image,
+                     lang: str = 'eng',
+                     output_format: str = 'text',
+                     config: str = '') -> Union[str, Dict]:
+\end{lstlisting}
+
+Processes a PIL Image object directly and extracts text using Tesseract OCR.
+
+\begin{itemize}
+  \item \textbf{image}: PIL Image object to process
+  \item \textbf{lang}: Language(s) to use for OCR (default: 'eng')
+  \item \textbf{output\_format}: Output format ('text', 'hocr', 'pdf', 'tsv', 'alto', 'page')
+  \item \textbf{config}: Additional configuration parameters for Tesseract
+  \item \textbf{Returns}: Extracted text or data in the specified format
+\end{itemize}
+
+\subsubsection{\_extract\_text Method}
+
+\begin{lstlisting}[language=Python]
+def _extract_text(self, 
+                 image: Image.Image, 
+                 lang: str, 
+                 output_format: str, 
+                 config: str) -> Union[str, Dict]:
+\end{lstlisting}
+
+Internal method that extracts text from an image using the appropriate Tesseract method based on the requested output format.
+
+\begin{itemize}
+  \item \textbf{image}: PIL Image object
+  \item \textbf{lang}: Language(s) for OCR
+  \item \textbf{output\_format}: Output format
+  \item \textbf{config}: Additional Tesseract configuration
+  \item \textbf{Returns}: Extracted text or data in the specified format
+\end{itemize}
+
+\subsection{Supported Output Formats}
+
+The OCR engine supports the following output formats:
+
+\begin{itemize}
+  \item \textbf{text}: Plain text output
+  \item \textbf{hocr}: HTML output with layout information
+  \item \textbf{pdf}: PDF output with embedded text
+  \item \textbf{tsv}: Tab-separated values with detailed information
+  \item \textbf{alto}: ALTO XML format
+  \item \textbf{page}: PAGE XML format
+\end{itemize}
+
+\subsection{Language Support}
+
+The language parameter (\texttt{lang}) can be set to any language supported by Tesseract. Multiple languages can be specified by joining them with a plus sign, e.g., \texttt{'eng+fra'} for English and French.
+
+To use a language, you need to have the corresponding language data files installed for Tesseract. The default language is English (\texttt{'eng'}).
+
+\subsection{Configuration Options}
+
+The \texttt{config} parameter allows you to pass additional configuration options to Tesseract. Some common options include:
+
+\begin{itemize}
+  \item \texttt{--psm N}: Page segmentation mode (0-13)
+  \item \texttt{--oem N}: OCR Engine mode (0-3)
+  \item \texttt{-c x=y}: Set parameter x to y
+\end{itemize}
+
+\subsubsection{Page Segmentation Modes (PSM)}
+
+\begin{itemize}
+  \item \texttt{--psm 0}: Orientation and script detection only
+  \item \texttt{--psm 1}: Automatic page segmentation with OSD
+  \item \texttt{--psm 3}: Fully automatic page segmentation, but no OSD (default)
+  \item \texttt{--psm 6}: Assume a single uniform block of text
+  \item \texttt{--psm 7}: Treat the image as a single text line
+  \item \texttt{--psm 8}: Treat the image as a single word
+  \item \texttt{--psm 10}: Treat the image as a single character
+\end{itemize}
+
+\subsection{Usage Examples}
+
+\subsubsection{Basic Text Extraction}
+
+\begin{lstlisting}[language=Python]
+from src.ocrMod.ocr_engine import OCREngine
+
+# Initialize the OCR engine
+ocr = OCREngine()
+
+# Extract text from an image
+text = ocr.process_image("scan.jpg")
+print(text)
+\end{lstlisting}
+
+\subsubsection{Using Different Languages}
+
+\begin{lstlisting}[language=Python]
+# Extract text in German
+text_de = ocr.process_image("german_document.jpg", lang="deu")
+
+# Extract text in multiple languages (English and Spanish)
+text_multi = ocr.process_image("multilingual.jpg", lang="eng+spa")
+\end{lstlisting}
+
+\subsubsection{Using Different Output Formats}
+
+\begin{lstlisting}[language=Python]
+# Get hOCR output (HTML with layout information)
+hocr = ocr.process_image("document.jpg", output_format="hocr")
+
+# Get TSV output (detailed information)
+tsv = ocr.process_image("document.jpg", output_format="tsv")
+\end{lstlisting}
+
+\subsubsection{Using Custom Configuration}
+
+\begin{lstlisting}[language=Python]
+# Use page segmentation mode 6 (single uniform block of text)
+text = ocr.process_image("document.jpg", config="--psm 6")
+
+# Use multiple configuration options
+text = ocr.process_image(
+    "document.jpg",
+    config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789"
+)
+\end{lstlisting}
+
+\subsubsection{Processing a PIL Image}
+
+\begin{lstlisting}[language=Python]
+from PIL import Image
+from src.ocrMod.ocr_engine import OCREngine
+
+# Open an image with PIL
+image = Image.open("document.jpg")
+
+# Preprocess the image if needed
+# image = image.convert('L')  # Convert to grayscale
+# image = image.resize((image.width * 2, image.height * 2))  # Resize
+
+# Initialize the OCR engine
+ocr = OCREngine()
+
+# Process the PIL image
+text = ocr.process_pil_image(image)
+print(text)
+\end{lstlisting} 

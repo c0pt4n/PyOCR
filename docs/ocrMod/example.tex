@@ -1,0 +1,116 @@
+\section{Example Usage (example.py)}
+\seclabel{example}
+
+The \texttt{example.py} module provides a complete example script demonstrating how to use the OCR module from the command line. It serves as both a practical example and a simple command-line tool for OCR tasks.
+
+\subsection{Script Overview}
+
+The example script allows you to process an image file using the OCR engine with various options:
+
+\begin{lstlisting}[language=bash]
+python -m src.ocrMod.example image_file.jpg [output_format] [language]
+\end{lstlisting}
+
+\subsection{Command-Line Arguments}
+
+\begin{itemize}
+  \item \textbf{image\_path}: Path to the image file to process (required)
+  \item \textbf{output\_format}: Output format (optional, default: 'text')
+  \item \textbf{language}: OCR language(s) (optional, default: 'eng')
+\end{itemize}
+
+\subsection{Supported Output Formats}
+
+The script supports all output formats provided by the OCR engine:
+\begin{itemize}
+  \item \textbf{text}: Plain text output
+  \item \textbf{hocr}: HTML output with layout information
+  \item \textbf{pdf}: PDF output with embedded text
+  \item \textbf{tsv}: Tab-separated values with detailed information
+  \item \textbf{alto}: ALTO XML format
+  \item \textbf{page}: PAGE XML format
+\end{itemize}
+
+\subsection{Implementation Details}
+
+The example script performs the following steps:
+
+\begin{enumerate}
+  \item Parses command-line arguments
+  \item Validates the input file
+  \item Initializes the OCR engine
+  \item Processes the image with the specified parameters
+  \item Handles the output based on the format:
+    \begin{itemize}
+      \item For text formats: Prints the result to the console
+      \item For binary formats (PDF, hOCR, ALTO): Saves to a file
+      \item For data formats (TSV): Prints a preview of the data
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Usage Examples}
+
+\subsubsection{Basic Text Extraction}
+
+\begin{lstlisting}[language=bash]
+python -m src.ocrMod.example scan.jpg
+\end{lstlisting}
+
+This command extracts text from \texttt{scan.jpg} using the default settings (English language, text output) and prints the result to the console.
+
+\subsubsection{Using Different Output Formats}
+
+\begin{lstlisting}[language=bash]
+python -m src.ocrMod.example scan.jpg hocr
+\end{lstlisting}
+
+This command extracts text from \texttt{scan.jpg} in hOCR format and saves it to \texttt{output.hocr}.
+
+\begin{lstlisting}[language=bash]
+python -m src.ocrMod.example scan.jpg pdf
+\end{lstlisting}
+
+This command creates a searchable PDF from \texttt{scan.jpg} and saves it to \texttt{output.pdf}.
+
+\subsubsection{Using Different Languages}
+
+\begin{lstlisting}[language=bash]
+python -m src.ocrMod.example german_document.jpg text deu
+\end{lstlisting}
+
+This command extracts text from \texttt{german\_document.jpg} using the German language model.
+
+\begin{lstlisting}[language=bash]
+python -m src.ocrMod.example multilingual.jpg text eng+fra
+\end{lstlisting}
+
+This command extracts text from \texttt{multilingual.jpg} using both English and French language models.
+
+\subsection{Extending the Example}
+
+The example script can be extended in various ways:
+
+\begin{itemize}
+  \item Adding support for additional command-line options
+  \item Implementing batch processing for multiple files
+  \item Adding image preprocessing options
+  \item Integrating with the image enhancement module
+\end{itemize}
+
+\subsection{Code Structure}
+
+The example script is structured as follows:
+
+\begin{lstlisting}[language=Python]
+def main():
+    # Parse command-line arguments
+    # Validate input file
+    # Initialize OCR engine
+    # Process the image
+    # Handle output based on format
+    
+if __name__ == "__main__":
+    sys.exit(main())
+\end{lstlisting}
+
+This structure follows best practices for Python command-line scripts, making it easy to understand and extend. 
